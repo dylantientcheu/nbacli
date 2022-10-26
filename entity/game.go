@@ -245,3 +245,37 @@ type Scoreboard struct {
 	NumGames int `json:"numGames"`
 	Games    []Game
 }
+
+type Teams struct {
+	Internal struct {
+		PubDateTime             string `json:"pubDateTime"`
+		IgorPath                string `json:"igorPath"`
+		Xslt                    string `json:"xslt"`
+		XsltForceRecompile      string `json:"xsltForceRecompile"`
+		XsltInCache             string `json:"xsltInCache"`
+		XsltCompileTimeMillis   string `json:"xsltCompileTimeMillis"`
+		XsltTransformTimeMillis string `json:"xsltTransformTimeMillis"`
+		ConsolidatedDomKey      string `json:"consolidatedDomKey"`
+		EndToEndTimeMillis      string `json:"endToEndTimeMillis"`
+	} `json:"_internal"`
+	League struct {
+		Standard []struct {
+			IsNBAFranchise bool   `json:"isNBAFranchise"`
+			IsAllStar      bool   `json:"isAllStar"`
+			City           string `json:"city"`
+			AltCityName    string `json:"altCityName"`
+			FullName       string `json:"fullName"`
+			Tricode        string `json:"tricode"`
+			TeamID         string `json:"teamId"`
+			Nickname       string `json:"nickname"`
+			URLName        string `json:"urlName"`
+			TeamShortName  string `json:"teamShortName"`
+			ConfName       string `json:"confName"`
+			DivName        string `json:"divName"`
+		} `json:"standard"`
+		Africa     []interface{} `json:"africa"`
+		Sacramento []interface{} `json:"sacramento"`
+		Vegas      []interface{} `json:"vegas"`
+		Utah       []interface{} `json:"utah"`
+	} `json:"league"`
+}
