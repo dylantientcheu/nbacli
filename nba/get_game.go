@@ -21,9 +21,15 @@ type Game struct {
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
 
-func (i Game) Title() string { return i.HTeam.TriCode + " vs " + i.VTeam.TriCode }
+func (i Game) Title() string {
+	vTeam, _ := GetTeamByIdOrTricode(i.VTeam.TeamID, i.VTeam.TriCode)
+	hTeam, _ := GetTeamByIdOrTricode(i.HTeam.TeamID, i.HTeam.TriCode)
+	return hTeam.TeamShortName + " vs " + vTeam.TeamShortName
+}
 func (i Game) Description() string {
-	return time.Until(i.StartTimeUTC).String()
+	timeUntil := time.Until(i.StartTimeUTC).Round(time.Minute)
+	venue := fmt.Sprintf("%s - %s, %s", i.Arena.Name, i.Arena.City, i.Arena.StateAbbr)
+	return fmt.Sprintf("Tip-off in %s | %s", timeUntil.String(), venue)
 }
 func (i Game) FilterValue() string { return i.GameID }
 
@@ -57,6 +63,9 @@ func (m model) View() string {
 }
 
 func FetchUpcomingGames() {
+	// an upcoming game is a game which starts in less than 23hours,
+	// we need to fetch all today and yesterday games which may fit in this criteria
+
 	currentDate := GetCurrentDate()
 	GAME_URL := fmt.Sprintf("https://data.nba.net/prod/v1/%s/scoreboard.json", currentDate)
 	resp, err := http.Get(GAME_URL)
