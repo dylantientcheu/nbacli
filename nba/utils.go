@@ -24,14 +24,16 @@ type Team struct {
 }
 
 // GetDateInFormat returns the current date in the format YYYYMMDD
-func GetCurrentDate() string {
+func GetUpcomingDates() (string, string, string) {
 
 	today := time.Now()
 	year := today.Year()
 	month := today.Month()
-	day := today.Day() // - 1 // todo: get timezone before showing today's games.
+	yesterday := today.Day() - 1
+	day := today.Day()
+	tomorrow := today.Day() + 1
 
-	return fmt.Sprintf("%d%02d%02d", year, month, day)
+	return fmt.Sprintf("%d%02d%02d", year, month, yesterday), fmt.Sprintf("%d%02d%02d", year, month, day), fmt.Sprintf("%d%02d%02d", year, month, tomorrow)
 }
 
 func GetTeamByIdOrTricode(id string, tricode string) (Team, error) {

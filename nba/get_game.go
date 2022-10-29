@@ -65,9 +65,64 @@ func (m model) View() string {
 func FetchUpcomingGames() {
 	// an upcoming game is a game which starts in less than 23hours,
 	// we need to fetch all today and yesterday games which may fit in this criteria
+	_, today, tomorrow := GetUpcomingDates()
 
-	currentDate := GetCurrentDate()
-	GAME_URL := fmt.Sprintf("https://data.nba.net/prod/v1/%s/scoreboard.json", currentDate)
+	todayScoreboards, err := getGames(today)
+	if err != nil {
+		log.Println("error getting scoreboards", err)
+	}
+
+	tomorrowScoreboards, err := getGames(tomorrow)
+	if err != nil {
+		log.Println("error getting scoreboards", err)
+	}
+
+	todayGames := make([]Game, 0, len(todayScoreboards.Games))
+	tomorrowGames := make([]Game, 0, len(tomorrowScoreboards.Games))
+
+	for _, game := range todayScoreboards.Games {
+		todayGame := Game{game}
+		todayGames = append(todayGames, todayGame)
+	}
+
+	for _, game := range tomorrowScoreboards.Games {
+		tomorrowGame := Game{game}
+		tomorrowGames = append(tomorrowGames, tomorrowGame)
+	}
+
+	games := make([]Game, len(todayGames), len(todayGames)+len(tomorrowGames))
+	_ = copy(games, todayGames)
+	games = append(games, tomorrowGames...)
+
+	items := []list.Item{}
+
+	// put all games into items
+	for _, game := range games {
+		isUpcoming := game.StartTimeUTC.Sub(time.Now().UTC()).Hours() < 24
+
+		if isUpcoming {
+			items = append(items, game)
+		}
+	}
+
+	m := model{list: list.New(items, list.NewDefaultDelegate(), 0, 0)}
+	m.list.Title = fmt.Sprintf("There are %d upcoming games today", len(items))
+
+	if len(games) == 0 {
+		fmt.Printf("There are no upcoming games today")
+		// todo: incase we have no games print something sweeeet!!
+	}
+
+	p := tea.NewProgram(m, tea.WithAltScreen())
+
+	if err := p.Start(); err != nil {
+		fmt.Println("Error running program:", err)
+		os.Exit(1)
+	}
+}
+
+func getGames(date string) (scbrd entity.Scoreboard, err error) {
+	GAME_URL := fmt.Sprintf("https://data.nba.net/prod/v1/%s/scoreboard.json", date)
 	resp, err := http.Get(GAME_URL)
 
 	if err != nil {
@@ -80,32 +135,5 @@ func FetchUpcomingGames() {
 	if err := json.NewDecoder(resp.Body).Decode(&scoreboard); err != nil {
 		log.Fatal("ooopsss! an error occurred, please try again")
 	}
-
-	games := make([]Game, 0, len(scoreboard.Games))
-
-	for _, game := range scoreboard.Games {
-		games = append(games, Game{game})
-	}
-
-	items := []list.Item{}
-
-	// put all games into items
-	for _, game := range games {
-		items = append(items, game)
-	}
-
-	m := model{list: list.New(items, list.NewDefaultDelegate(), 0, 0)}
-	m.list.Title = fmt.Sprintf("There are %d upcoming games today\n", scoreboard.NumGames)
-
-	if (scoreboard.NumGames) == 0 {
-		fmt.Printf("There are no upcoming games today")
-		// todo: incase we have no games print something sweeeet!!
-	}
-
-	p := tea.NewProgram(m, tea.WithAltScreen())
-
-	if err := p.Start(); err != nil {
-		fmt.Println("Error running program:", err)
-		os.Exit(1)
-	}
+	return scoreboard, nil
 }
