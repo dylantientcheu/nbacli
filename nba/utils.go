@@ -24,14 +24,14 @@ type Team struct {
 }
 
 // GetDateInFormat returns the current date in the format YYYYMMDD
-func GetUpcomingDates() (string, string, string) {
+func GetUpcomingDates(date time.Time) (string, string, string) {
+	// todo: add ability to get multiple date formats
 
-	today := time.Now()
-	year := today.Year()
-	month := today.Month()
-	yesterday := today.Day() - 1
-	day := today.Day()
-	tomorrow := today.Day() + 1
+	year := date.Year()
+	month := date.Month()
+	yesterday := date.Day() - 1
+	day := date.Day()
+	tomorrow := date.Day() + 1
 
 	return fmt.Sprintf("%d%02d%02d", year, month, yesterday), fmt.Sprintf("%d%02d%02d", year, month, day), fmt.Sprintf("%d%02d%02d", year, month, tomorrow)
 }
