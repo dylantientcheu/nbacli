@@ -30,7 +30,6 @@ func (i Game) Title() string {
 func (i Game) Description() string {
 	timeUntil := time.Until(i.StartTimeUTC).Round(time.Minute)
 	venue := fmt.Sprintf("%s - %s, %s", i.Arena.Name, i.Arena.City, i.Arena.StateAbbr)
-	fmt.Println(i.flag)
 	if i.flag != "" {
 		time := i.StartTimeUTC.Format(time.RFC822)
 		return fmt.Sprintf("%s | %s", time, venue)
