@@ -17,6 +17,7 @@ import (
 
 type Game struct {
 	entity.Game
+	flag string
 }
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
@@ -29,9 +30,18 @@ func (i Game) Title() string {
 func (i Game) Description() string {
 	timeUntil := time.Until(i.StartTimeUTC).Round(time.Minute)
 	venue := fmt.Sprintf("%s - %s, %s", i.Arena.Name, i.Arena.City, i.Arena.StateAbbr)
+	fmt.Println(i.flag)
+	if i.flag != "" {
+		time := i.StartTimeUTC.Format(time.RFC822)
+		return fmt.Sprintf("%s | %s", time, venue)
+	}
 	return fmt.Sprintf("Tip-off in %s | %s", timeUntil.String(), venue)
 }
-func (i Game) FilterValue() string { return i.GameID }
+func (i Game) FilterValue() string {
+	vTeam, _ := GetTeamByIdOrTricode(i.VTeam.TeamID, i.VTeam.TriCode)
+	hTeam, _ := GetTeamByIdOrTricode(i.HTeam.TeamID, i.HTeam.TriCode)
+	return hTeam.TeamShortName + " vs " + vTeam.TeamShortName
+}
 
 type model struct {
 	list list.Model
@@ -62,37 +72,44 @@ func (m model) View() string {
 	return docStyle.Render(m.list.View())
 }
 
-func FetchUpcomingGames() {
+func FetchUpcomingGames(date time.Time, flag string) {
 	// an upcoming game is a game which starts in less than 23hours,
 	// we need to fetch all today and yesterday games which may fit in this criteria
-	_, today, tomorrow := GetUpcomingDates()
 
-	todayScoreboards, err := getGames(today)
+	// print date
+	fmt.Printf("Getting games for %v", date.Format("Monday, January 2, 2006"))
+
+	_, today, tomorrow := GetUpcomingDates(date)
+
+	currentDateScoreboards, err := getGames(today)
 	if err != nil {
 		log.Println("error getting scoreboards", err)
 	}
 
-	tomorrowScoreboards, err := getGames(tomorrow)
+	nextDateScoreboards, err := getGames(tomorrow)
 	if err != nil {
 		log.Println("error getting scoreboards", err)
 	}
 
-	todayGames := make([]Game, 0, len(todayScoreboards.Games))
-	tomorrowGames := make([]Game, 0, len(tomorrowScoreboards.Games))
+	currentDayGames := make([]Game, 0, len(currentDateScoreboards.Games))
+	nextDayGames := make([]Game, 0, len(nextDateScoreboards.Games))
 
-	for _, game := range todayScoreboards.Games {
-		todayGame := Game{game}
-		todayGames = append(todayGames, todayGame)
+	for _, game := range currentDateScoreboards.Games {
+		todayGame := Game{game, flag}
+		currentDayGames = append(currentDayGames, todayGame)
 	}
 
-	for _, game := range tomorrowScoreboards.Games {
-		tomorrowGame := Game{game}
-		tomorrowGames = append(tomorrowGames, tomorrowGame)
+	// do not take tomorrow games if flag is set to yesterday or tomorrow
+	if flag == "" {
+		for _, game := range nextDateScoreboards.Games {
+			tomorrowGame := Game{game, flag}
+			nextDayGames = append(nextDayGames, tomorrowGame)
+		}
 	}
 
-	games := make([]Game, len(todayGames), len(todayGames)+len(tomorrowGames))
-	_ = copy(games, todayGames)
-	games = append(games, tomorrowGames...)
+	games := make([]Game, len(currentDayGames), len(currentDayGames)+len(nextDayGames))
+	_ = copy(games, currentDayGames)
+	games = append(games, nextDayGames...)
 
 	items := []list.Item{}
 
@@ -100,13 +117,17 @@ func FetchUpcomingGames() {
 	for _, game := range games {
 		isUpcoming := game.StartTimeUTC.Sub(time.Now().UTC()).Hours() < 24
 
-		if isUpcoming {
+		if isUpcoming && flag != "" {
+			items = append(items, game)
+		} else {
+			// if we are not getting upcoming games (as from today),
+			// we might aswell just add all games
 			items = append(items, game)
 		}
 	}
 
 	m := model{list: list.New(items, list.NewDefaultDelegate(), 0, 0)}
-	m.list.Title = fmt.Sprintf("There are %d upcoming games today", len(items))
+	m.list.Title = "NBA GAMES"
 
 	if len(games) == 0 {
 		fmt.Printf("There are no upcoming games today")
