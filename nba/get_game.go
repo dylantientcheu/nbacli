@@ -118,9 +118,9 @@ func FetchUpcomingGames(date time.Time, flag string) {
 
 		if isUpcoming && flag != "" {
 			items = append(items, game)
-		} else {
+		} else if isUpcoming {
 			// if we are not getting upcoming games (as from today),
-			// we might aswell just add all games
+			// we might aswell just add all upcoming games
 			items = append(items, game)
 		}
 	}
