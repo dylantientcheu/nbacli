@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"time"
 )
 
 type Team struct {
@@ -21,19 +20,6 @@ type Team struct {
 	TeamShortName  string `json:"teamShortName"`
 	ConfName       string `json:"confName"`
 	DivName        string `json:"divName"`
-}
-
-// GetDateInFormat returns the current date in the format YYYYMMDD
-func GetUpcomingDates(date time.Time) (string, string, string) {
-	// todo: add ability to get multiple date formats
-
-	year := date.Year()
-	month := date.Month()
-	yesterday := date.Day() - 1
-	day := date.Day()
-	tomorrow := date.Day() + 1
-
-	return fmt.Sprintf("%d%02d%02d", year, month, yesterday), fmt.Sprintf("%d%02d%02d", year, month, day), fmt.Sprintf("%d%02d%02d", year, month, tomorrow)
 }
 
 func GetTeamByIdOrTricode(id string, tricode string) (Team, error) {
