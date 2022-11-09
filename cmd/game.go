@@ -5,9 +5,9 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"time"
-
 	"nba-cli/nba"
+	"nba-cli/ui"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -21,20 +21,23 @@ var gameCmd = &cobra.Command{
 	Use:   "game",
 	Short: "Get the NBA schedule for a specific date",
 	Run: func(cmd *cobra.Command, args []string) {
-		date, _ = cmd.Flags().GetString("date")
-		/* if hasYesterday {
-			nba.FetchUpcomingGames(time.Now().AddDate(0, 0, -1), "y")
+		scbrd := nba.ScoreboardRepository{}
+
+		// no date then get today's games
+		dateArg := time.Now()
+
+		if hasYesterday {
+			dateArg = time.Now().AddDate(0, 0, -1)
 		}
 		if hasTomorrow {
-			nba.FetchUpcomingGames(time.Now().AddDate(0, 0, 1), "t")
+			dateArg = time.Now().AddDate(0, 0, 1)
 		}
-		// no date then get today's games
-		if date == "" && !hasYesterday && !hasTomorrow {
-			nba.FetchUpcomingGames(time.Now(), "")
-		} else if date != "" {
-			dateValue, _ := time.Parse("20060102", date)
-			nba.FetchUpcomingGames(dateValue, "d")
-		} */
+		if date != "" {
+			dateArg, _ = time.Parse("20060102", date)
+		}
+
+		// start the tui
+		ui.StartTea(scbrd, dateArg)
 
 	},
 }
@@ -43,10 +46,7 @@ var gameIdCmd = &cobra.Command{
 	Use:   "gameid",
 	Short: "Get the NBA schedule for a specific date",
 	Run: func(cmd *cobra.Command, args []string) {
-		nba.GetGames(time.Now())
-		/* for _, game := range scbrd.GameHeader {
-			fmt.Println(game.GameID)
-		} */
+
 	},
 }
 

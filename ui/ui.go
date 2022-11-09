@@ -3,16 +3,16 @@ package ui
 import (
 	"fmt"
 	"log"
+	"nba-cli/nba"
 	"nba-cli/ui/constants"
 	"os"
-
-	"nba-cli/nag"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 // StartTea the entry point for the UI. Initializes the model.
-func StartTea(sb nag.ScoreBoardV2, gm nag.BoxScoreSummaryV2) {
+func StartTea(sb nba.ScoreboardRepository, date time.Time) {
 	if f, err := tea.LogToFile("debug.log", "help"); err != nil {
 		fmt.Println("Couldn't open a file for logging:", err)
 		os.Exit(1)
@@ -25,9 +25,9 @@ func StartTea(sb nag.ScoreBoardV2, gm nag.BoxScoreSummaryV2) {
 		}()
 	}
 	constants.Sb = &sb
-	constants.Gm = &gm
+	// constants.Gm = &gm
 
-	m := InitProject()
+	m := InitScoreboard(date)
 	constants.P = tea.NewProgram(m, tea.WithAltScreen())
 	if err := constants.P.Start(); err != nil {
 		fmt.Println("Error running program:", err)

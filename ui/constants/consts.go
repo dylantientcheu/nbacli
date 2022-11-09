@@ -1,7 +1,7 @@
 package constants
 
 import (
-	"nba-cli/nag"
+	"nba-cli/nba"
 
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
@@ -14,9 +14,9 @@ var (
 	// P the current tea program
 	P *tea.Program
 	// Er the entry repository for the tui
-	Gm *nag.BoxScoreSummaryV2
+	Gm *nba.Game
 	// Pr the project repository for the tui
-	Sb *nag.ScoreBoardV2
+	Sb *nba.ScoreboardRepository
 	// WindowSize store the size of the terminal window
 	WindowSize tea.WindowSizeMsg
 )

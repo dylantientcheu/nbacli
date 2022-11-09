@@ -1,8 +1,10 @@
 package ui
 
 import (
-	"log"
+	"fmt"
+	"nba-cli/nba"
 	"nba-cli/ui/constants"
+	"time"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
@@ -29,14 +31,14 @@ type Model struct {
 	quitting bool
 }
 
-func InitProject() tea.Model {
-	items := newProjectList(constants.Sb)
+func InitScoreboard(date time.Time) tea.Model {
+	items := newScoreboardList(constants.Sb, date)
 	m := Model{mode: nav, list: list.NewModel(items, list.NewDefaultDelegate(), 8, 8)}
 	if constants.WindowSize.Height != 0 {
 		top, right, bottom, left := constants.DocStyle.GetMargin()
 		m.list.SetSize(constants.WindowSize.Width-left-right, constants.WindowSize.Height-top-bottom-1)
 	}
-	m.list.Title = "projects"
+	m.list.Title = "NBA Games"
 	m.list.AdditionalShortHelpKeys = func() []key.Binding {
 		return []key.Binding{
 			constants.Keymap.Create,
@@ -48,12 +50,9 @@ func InitProject() tea.Model {
 	return m
 }
 
-func newProjectList(pr *project.GormRepository) []list.Item {
-	projects, err := pr.GetAllProjects()
-	if err != nil {
-		log.Fatal(err)
-	}
-	return projectsToItems(projects)
+func newScoreboardList(scbrd *nba.ScoreboardRepository, date time.Time) []list.Item {
+	games := scbrd.GetGames(date)
+	return gamesToItems(games)
 }
 
 // Init run any intial IO on program start
@@ -70,58 +69,24 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		constants.WindowSize = msg
 		top, right, bottom, left := constants.DocStyle.GetMargin()
 		m.list.SetSize(msg.Width-left-right, msg.Height-top-bottom-1)
-	case updateProjectListMsg:
-		projects, err := constants.Pr.GetAllProjects()
-		if err != nil {
-			log.Fatal(err)
-		}
-		items := projectsToItems(projects)
-		m.list.SetItems(items)
-		m.mode = nav
 	case tea.KeyMsg:
-		if m.input.Focused() {
-			if key.Matches(msg, constants.Keymap.Enter) {
-				if m.mode == create {
-					cmds = append(cmds, createProjectCmd(m.input.Value(), constants.Pr))
-				}
-				if m.mode == edit {
-					cmds = append(cmds, renameProjectCmd(m.getActiveProjectID(), constants.Pr, m.input.Value()))
-				}
-				m.input.SetValue("")
-				m.mode = nav
-				m.input.Blur()
-			}
-			if key.Matches(msg, constants.Keymap.Back) {
-
-			}
-			cmds = append(cmds, cmd)
-		} else {
-			switch {
-			case key.Matches(msg, constants.Keymap.Create):
-				m.mode = create
-				m.input.Focus()
-				cmd = textinput.Blink
-			case key.Matches(msg, constants.Keymap.Quit):
-				m.quitting = true
-				return m, tea.Quit
-			case key.Matches(msg, constants.Keymap.Enter):
-				activeProject := m.list.SelectedItem().(project.Project)
-				entry := InitEntry(constants.Er, activeProject.ID, constants.P)
-				return entry.Update(constants.WindowSize)
-			case key.Matches(msg, constants.Keymap.Rename):
-				m.mode = edit
-				m.input.Focus()
-				cmd = textinput.Blink
-			case key.Matches(msg, constants.Keymap.Delete):
-				items := m.list.Items()
-				if len(items) > 0 {
-					cmd = deleteProjectCmd(m.getActiveProjectID(), constants.Pr)
-				}
-			default:
-				m.list, cmd = m.list.Update(msg)
-			}
-			cmds = append(cmds, cmd)
+		switch {
+		case key.Matches(msg, constants.Keymap.Create):
+			m.mode = create
+			cmd = textinput.Blink
+		case key.Matches(msg, constants.Keymap.Quit):
+			m.quitting = true
+			return m, tea.Quit
+		case key.Matches(msg, constants.Keymap.Enter):
+			activeGame := m.list.SelectedItem().(nba.Game)
+			fmt.Printf("%#v", activeGame.GameId)
+			return m, tea.Quit // enter the game id
+			// entry := InitEntry(constants.Er, activeProject.ID, constants.P)
+			// return entry.Update(constants.WindowSize)
+		default:
+			m.list, cmd = m.list.Update(msg)
 		}
+		cmds = append(cmds, cmd)
 	}
 	return m, tea.Batch(cmds...)
 }
@@ -131,24 +96,21 @@ func (m Model) View() string {
 	if m.quitting {
 		return ""
 	}
-	if m.input.Focused() {
-		return constants.DocStyle.Render(m.list.View() + "\n" + m.input.View())
-	}
 	return constants.DocStyle.Render(m.list.View() + "\n")
 }
 
 // TODO: use generics
-// projectsToItems convert []model.Project to []list.Item
-func projectsToItems(projects []project.Project) []list.Item {
-	items := make([]list.Item, len(projects))
-	for i, proj := range projects {
+// gamesToItems convert []model.Project to []list.Item
+func gamesToItems(games []nba.Game) []list.Item {
+	items := make([]list.Item, len(games))
+	for i, proj := range games {
 		items[i] = list.Item(proj)
 	}
 	return items
 }
 
-func (m Model) getActiveProjectID() uint {
+func (m Model) getActiveGameID() string {
 	items := m.list.Items()
 	activeItem := items[m.list.Index()]
-	return activeItem.(project.Project).ID
+	return activeItem.(nba.Game).GameId
 }

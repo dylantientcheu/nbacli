@@ -14,7 +14,7 @@ type Team struct {
 	AltCityName    string `json:"altCityName"`
 	FullName       string `json:"fullName"`
 	Tricode        string `json:"tricode"`
-	TeamID         string `json:"teamId"`
+	TeamID         int64  `json:"teamId"`
 	Nickname       string `json:"nickname"`
 	URLName        string `json:"urlName"`
 	TeamShortName  string `json:"teamShortName"`
@@ -22,7 +22,7 @@ type Team struct {
 	DivName        string `json:"divName"`
 }
 
-func GetTeamByIdOrTricode(id string, tricode string) (Team, error) {
+func GetTeamByIdOrTricode(id int64, tricode string) (Team, error) {
 	jsonFile, err := os.Open("./static/teams.json")
 
 	if err != nil {
