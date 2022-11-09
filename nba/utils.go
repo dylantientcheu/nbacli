@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"time"
 )
 
 type Team struct {
@@ -15,7 +14,7 @@ type Team struct {
 	AltCityName    string `json:"altCityName"`
 	FullName       string `json:"fullName"`
 	Tricode        string `json:"tricode"`
-	TeamID         string `json:"teamId"`
+	TeamID         int64  `json:"teamId"`
 	Nickname       string `json:"nickname"`
 	URLName        string `json:"urlName"`
 	TeamShortName  string `json:"teamShortName"`
@@ -23,20 +22,7 @@ type Team struct {
 	DivName        string `json:"divName"`
 }
 
-// GetDateInFormat returns the current date in the format YYYYMMDD
-func GetUpcomingDates(date time.Time) (string, string, string) {
-	// todo: add ability to get multiple date formats
-
-	year := date.Year()
-	month := date.Month()
-	yesterday := date.Day() - 1
-	day := date.Day()
-	tomorrow := date.Day() + 1
-
-	return fmt.Sprintf("%d%02d%02d", year, month, yesterday), fmt.Sprintf("%d%02d%02d", year, month, day), fmt.Sprintf("%d%02d%02d", year, month, tomorrow)
-}
-
-func GetTeamByIdOrTricode(id string, tricode string) (Team, error) {
+func GetTeamByIdOrTricode(id int64, tricode string) (Team, error) {
 	jsonFile, err := os.Open("./static/teams.json")
 
 	if err != nil {
