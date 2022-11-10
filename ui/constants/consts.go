@@ -24,7 +24,7 @@ var (
 /* STYLING */
 
 // DocStyle styling for viewports
-var DocStyle = lipgloss.NewStyle().Margin(0, 2)
+var DocStyle = lipgloss.NewStyle().Margin(1, 2)
 
 // HelpStyle styling for help context menu
 var HelpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("241")).Render

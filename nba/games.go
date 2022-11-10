@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/mitchellh/mapstructure"
+	"github.com/nleeper/goment"
 
 	"nba-cli/nag"
 )
@@ -35,7 +36,19 @@ func (g Game) Title() string { return g.HomeTeamName + " vs " + g.VisitorTeamNam
 // Description the game description to display in a list
 func (g Game) Description() string {
 	// timeUntil := time.Until(time.Now()).Round(time.Minute) // TODO: find a way to get the game time
-	return fmt.Sprintf("Tip-off in %s | %s", g.GameStatus, g.ArenaName)
+
+	var desc = ""
+	if g.GameStatus != "Final" {
+		gameTime := GetDateTimeFromESTInUTC(g.GameStatus, g.GameDate)
+		moment, _ := goment.Unix(gameTime.Unix())
+		now, _ := goment.New()
+
+		desc = fmt.Sprintf("Tip-off %s | %s", moment.From(now), g.ArenaName)
+	} else {
+		desc = fmt.Sprintf("%s | %s", g.GameDate, g.ArenaName)
+	}
+
+	return desc
 }
 
 // FilterValue choose what field to use for filtering in a Bubbletea list component
