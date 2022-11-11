@@ -35,8 +35,6 @@ func (g Game) Title() string { return g.HomeTeamName + " vs " + g.VisitorTeamNam
 
 // Description the game description to display in a list
 func (g Game) Description() string {
-	// timeUntil := time.Until(time.Now()).Round(time.Minute) // TODO: find a way to get the game time
-
 	var desc = ""
 	if g.GameStatus != "Final" {
 		gameTime := GetDateTimeFromESTInUTC(g.GameStatus, g.GameDate)
