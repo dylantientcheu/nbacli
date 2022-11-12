@@ -64,6 +64,11 @@ func GetDateTimeFromESTInUTC(estTime string, gameDate string) time.Time {
 
 	fullTime := cleanTime[:len(cleanTime)-2] + ":00"
 
+	// prepend a 0 to handle the case where time is 3:04:05 -> 03:04:05
+	if len(fullTime) < 8 {
+		fullTime = "0" + fullTime
+	}
+
 	t, _ := time.Parse("03:04:05PM", fullTime+timeMeridian)
 	fullTime = t.Format("15:04:05")
 
@@ -83,5 +88,12 @@ func GetDateTimeFromESTInUTC(estTime string, gameDate string) time.Time {
 	}
 
 	return dt.UTC()
+}
 
+func GetDateFromString(gameDate string) time.Time {
+	date, err := time.Parse("2006-01-02", gameDate[:len(gameDate)-9])
+	if err != nil {
+		panic(err)
+	}
+	return date
 }

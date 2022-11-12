@@ -137,7 +137,6 @@ const (
 
 // NewScoreBoardV2 creates a default ScoreBoardV2 instance.
 func NewScoreBoardV2(date time.Time) *ScoreBoardV2 {
-	fmt.Println(date.Format("2006-01-02"))
 	return &ScoreBoardV2{
 		Client:    NewDefaultClient(),
 		DayOffset: 0,

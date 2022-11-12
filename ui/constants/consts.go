@@ -51,11 +51,11 @@ var Keymap = keymap{
 	),
 	Yesterday: key.NewBinding(
 		key.WithKeys("i"),
-		key.WithHelp("i", "yesterday"),
+		key.WithHelp("i", "previous day"),
 	),
 	Tomorrow: key.NewBinding(
 		key.WithKeys("o"),
-		key.WithHelp("o", "tomorrow"),
+		key.WithHelp("o", "next day"),
 	),
 	Back: key.NewBinding(
 		key.WithKeys("esc"),

@@ -24,20 +24,22 @@ const (
 )
 
 type Model struct {
-	mode     mode
-	list     list.Model
-	quitting bool
-	gameview bool
+	mode        mode
+	list        list.Model
+	currentDate time.Time
+	quitting    bool
+	gameview    bool
 }
 
 func InitScoreboard(date time.Time) tea.Model {
+	// TODO: add spinners
 	items := newScoreboardList(constants.Sb, date)
-	m := Model{mode: nav, list: list.NewModel(items, list.NewDefaultDelegate(), 8, 8)}
+	m := Model{mode: nav, currentDate: date, list: list.NewModel(items, list.NewDefaultDelegate(), 8, 8)}
 	if constants.WindowSize.Height != 0 {
 		top, right, bottom, left := constants.DocStyle.GetMargin()
 		m.list.SetSize(constants.WindowSize.Width-left-right, constants.WindowSize.Height-top-bottom-1)
 	}
-	m.list.Title = "NBA Games"
+	m.list.Title = "NBA Games - " + m.currentDate.Format("Monday, 2 Jan 06")
 	m.list.AdditionalShortHelpKeys = func() []key.Binding {
 		return []key.Binding{
 			constants.Keymap.Tomorrow,
@@ -70,9 +72,21 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, constants.Keymap.Yesterday):
-			return m, tea.Quit
+			// TODO: add spinners
+			var previousDay nba.ScoreboardRepository
+			m.currentDate = m.currentDate.AddDate(0, 0, -1)
+			games := previousDay.GetGames(m.currentDate)
+			items := gamesToItems(games)
+			m.list.Title = "NBA Games - " + m.currentDate.Format("Monday, 2 Jan 06")
+			m.list.SetItems(items)
 		case key.Matches(msg, constants.Keymap.Tomorrow):
-			return m, tea.Quit
+			// TODO: add spinners
+			var nextDay nba.ScoreboardRepository
+			m.currentDate = m.currentDate.AddDate(0, 0, 1)
+			games := nextDay.GetGames(m.currentDate)
+			items := gamesToItems(games)
+			m.list.Title = "NBA Games - " + m.currentDate.Format("Monday, 2 Jan 06")
+			m.list.SetItems(items)
 		case key.Matches(msg, constants.Keymap.Quit):
 			m.quitting = true
 			return m, tea.Quit

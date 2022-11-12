@@ -43,7 +43,9 @@ func (g Game) Description() string {
 
 		desc = fmt.Sprintf("Tip-off %s | %s", moment.From(now), g.ArenaName)
 	} else {
-		desc = fmt.Sprintf("%s | %s", g.GameDate, g.ArenaName)
+		// get the game date from string
+		gameDate := GetDateFromString(g.GameDate).Format("2006-01-02")
+		desc = fmt.Sprintf("FINAL - %s | %s", gameDate, g.ArenaName)
 	}
 
 	return desc
