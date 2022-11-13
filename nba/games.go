@@ -2,20 +2,15 @@ package nba
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/nleeper/goment"
 
 	"nba-cli/nag"
+	"nba-cli/styles"
 )
-
-/* var (
-	// Gm the entry repository for the tui
-	Gm *nag.BoxScoreSummaryV2
-	// Sb the project repository for the tui
-	Sb *nag.ScoreBoardV2
-) */
 
 type Game struct {
 	GameId           string
@@ -36,16 +31,22 @@ func (g Game) Title() string { return g.HomeTeamName + " vs " + g.VisitorTeamNam
 // Description the game description to display in a list
 func (g Game) Description() string {
 	var desc = ""
-	if g.GameStatus != "Final" {
-		gameTime := GetDateTimeFromESTInUTC(g.GameStatus, g.GameDate)
+	var status = strings.TrimSpace(g.GameStatus)
+	if status[len(status)-2:] == "ET" {
+		// upcoming game
+		gameTime := GetDateTimeFromESTInUTC(status, g.GameDate)
 		moment, _ := goment.Unix(gameTime.Unix())
 		now, _ := goment.New()
 
+		// show time from now
 		desc = fmt.Sprintf("Tip-off %s | %s", moment.From(now), g.ArenaName)
-	} else {
-		// get the game date from string
+	} else if status == "Final" {
+		// upcoming game
 		gameDate := GetDateFromString(g.GameDate).Format("2006-01-02")
-		desc = fmt.Sprintf("FINAL - %s | %s", gameDate, g.ArenaName)
+		desc = fmt.Sprintf("%s - %s | %s", styles.FinalStyle(), gameDate, g.ArenaName)
+	} else {
+		// live game
+		desc = fmt.Sprintf("%s - %s | %s", styles.LiveStyle(), status, g.ArenaName)
 	}
 
 	return desc

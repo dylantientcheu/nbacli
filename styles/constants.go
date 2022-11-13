@@ -11,6 +11,9 @@ var EmphasisText = lipgloss.NewStyle().Bold(true)
 var PrimaryText = lipgloss.NewStyle().Bold(true)
 var SecondaryText = lipgloss.NewStyle().Foreground(lipgloss.Color("#808080"))
 
+var LiveText = lipgloss.NewStyle().Background(lipgloss.AdaptiveColor{Light: "#ef2929", Dark: "#ef2929"}).Foreground(lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffff"}).Bold(true)
+var FinalText = lipgloss.NewStyle().Background(lipgloss.Color("#9356DF")).Foreground(lipgloss.Color("#ffffff"))
+
 const (
 	bullet   = "•"
 	ellipsis = "…"
@@ -156,4 +159,12 @@ func GetSpinner() spinner.Spinner {
 		},
 		FPS: 1500 * time.Millisecond,
 	}
+}
+
+func LiveStyle() string {
+	return LiveText.Render(" LIVE ")
+}
+
+func FinalStyle() string {
+	return FinalText.Render(" FINAL ")
 }
