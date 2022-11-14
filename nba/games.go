@@ -21,8 +21,8 @@ type Game struct {
 	HomeTeamName     string
 	VisitorTeamId    int64
 	VisitorTeamName  string
-	HomeTeamScore    int64
-	VisitorTeamScore int64
+	HomeTeamScore    int
+	VisitorTeamScore int
 	ArenaName        string
 }
 
@@ -41,9 +41,9 @@ func (g Game) Description() string {
 		// show time from now
 		desc = fmt.Sprintf("Tip-off %s | %s", moment.From(now), g.ArenaName)
 	} else if status == "Final" {
-		// upcoming game
+		// passed game
 		gameDate := GetDateFromString(g.GameDate).Format("2006-01-02")
-		desc = fmt.Sprintf("%s - %s | %s", styles.FinalStyle(), gameDate, g.ArenaName)
+		desc = fmt.Sprintf("%s  %s | %s", styles.ScoreStyle(g.HomeTeamScore, g.VisitorTeamScore), gameDate, g.ArenaName)
 	} else {
 		// live game
 		desc = fmt.Sprintf("%s - %s | %s", styles.LiveStyle(), status, g.ArenaName)
@@ -107,10 +107,17 @@ func (g *ScoreboardRepository) GetGames(date time.Time) (scbrd []Game) {
 		game.ArenaName = v.ArenaName
 		game.GameStatus = v.GameStatusText
 
-		games = append(games, game)
+		// get games scores
+		for _, s := range result.LineScore {
+			if s.TeamID == v.HomeTeamID {
+				game.HomeTeamScore = s.Pts
+			}
+			if s.TeamID == v.VisitorTeamID {
+				game.VisitorTeamScore = s.Pts
+			}
+		}
 
-		/* p, _ := json.MarshalIndent(game, "", " ")
-		fmt.Println(string(p)) */
+		games = append(games, game)
 	}
 	return games
 }

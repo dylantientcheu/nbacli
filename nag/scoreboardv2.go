@@ -98,7 +98,7 @@ type LineScore struct {
 	GameDateEst      string      `mapstructure:"GAME_DATE_EST"`
 	GameID           string      `mapstructure:"GAME_ID"`
 	GameSequence     int64       `mapstructure:"GAME_SEQUENCE"`
-	Pts              interface{} `mapstructure:"PTS"`
+	Pts              int         `mapstructure:"PTS"`
 	PtsOt1           interface{} `mapstructure:"PTS_OT1"`
 	PtsOt10          interface{} `mapstructure:"PTS_OT10"`
 	PtsOt2           interface{} `mapstructure:"PTS_OT2"`
