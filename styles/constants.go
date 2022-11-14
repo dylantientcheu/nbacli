@@ -1,6 +1,7 @@
 package styles
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/charmbracelet/bubbles/spinner"
@@ -12,7 +13,9 @@ var PrimaryText = lipgloss.NewStyle().Bold(true)
 var SecondaryText = lipgloss.NewStyle().Foreground(lipgloss.Color("#808080"))
 
 var LiveText = lipgloss.NewStyle().Background(lipgloss.AdaptiveColor{Light: "#ef2929", Dark: "#ef2929"}).Foreground(lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffff"}).Bold(true)
-var FinalText = lipgloss.NewStyle().Background(lipgloss.Color("#9356DF")).Foreground(lipgloss.Color("#ffffff"))
+var FinalText = lipgloss.NewStyle().Background(lipgloss.Color("#9356DF")).Foreground(lipgloss.Color("#ffffff")).Bold(true)
+var HomeScoreText = lipgloss.NewStyle().Background(lipgloss.Color("#9356DF")).Foreground(lipgloss.Color("#ffffff")).Bold(true)
+var AwayScoreText = lipgloss.NewStyle().Background(lipgloss.Color("#9356DF")).Foreground(lipgloss.Color("#ffffff")).Bold(true)
 
 const (
 	bullet   = "•"
@@ -167,4 +170,8 @@ func LiveStyle() string {
 
 func FinalStyle() string {
 	return FinalText.Render(" FINAL ")
+}
+
+func ScoreStyle(homeScore int, awayScore int) string {
+	return HomeScoreText.Render(" " + strconv.Itoa(homeScore) + " - " + strconv.Itoa(awayScore) + " ")
 }
