@@ -14,8 +14,8 @@ var SecondaryText = lipgloss.NewStyle().Foreground(lipgloss.Color("#808080"))
 
 var LiveText = lipgloss.NewStyle().Background(lipgloss.AdaptiveColor{Light: "#ef2929", Dark: "#ef2929"}).Foreground(lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffff"}).Bold(true)
 var FinalText = lipgloss.NewStyle().Background(lipgloss.Color("#9356DF")).Foreground(lipgloss.Color("#ffffff")).Bold(true)
-var HomeScoreText = lipgloss.NewStyle().Background(lipgloss.Color("#9356DF")).Foreground(lipgloss.Color("#ffffff")).Bold(true)
-var AwayScoreText = lipgloss.NewStyle().Background(lipgloss.Color("#9356DF")).Foreground(lipgloss.Color("#ffffff")).Bold(true)
+var DescText = lipgloss.NewStyle().Foreground(lipgloss.Color("#818181"))
+var ScoreText = lipgloss.NewStyle().Background(lipgloss.AdaptiveColor{Light: "16", Dark: "16"}).Foreground(lipgloss.AdaptiveColor{Light: "27", Dark: "214"})
 
 const (
 	bullet   = "•"
@@ -173,5 +173,9 @@ func FinalStyle() string {
 }
 
 func ScoreStyle(homeScore int, awayScore int) string {
-	return HomeScoreText.Render(" " + strconv.Itoa(homeScore) + " - " + strconv.Itoa(awayScore) + " ")
+	return ScoreText.Render(" " + strconv.Itoa(homeScore) + " - " + strconv.Itoa(awayScore) + " ")
+}
+
+func DescStyle(desc string) string {
+	return DescText.Render(desc)
 }

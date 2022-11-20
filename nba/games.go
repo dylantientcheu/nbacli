@@ -40,13 +40,15 @@ func (g Game) Description() string {
 
 		// show time from now
 		desc = fmt.Sprintf("Tip-off %s | %s", moment.From(now), g.ArenaName)
+		desc = styles.DescStyle(desc)
 	} else if status == "Final" {
 		// passed game
 		gameDate := GetDateFromString(g.GameDate).Format("2006-01-02")
-		desc = fmt.Sprintf("%s  %s | %s", styles.ScoreStyle(g.HomeTeamScore, g.VisitorTeamScore), gameDate, g.ArenaName)
+		desc = fmt.Sprintf("%s  %s | %s", styles.ScoreStyle(g.HomeTeamScore, g.VisitorTeamScore), styles.DescStyle(gameDate), styles.DescStyle(g.ArenaName))
 	} else {
 		// live game
-		desc = fmt.Sprintf("%s - %s | %s", styles.LiveStyle(), status, g.ArenaName)
+		desc = fmt.Sprintf("%s %s - %s | %s", styles.LiveStyle(), styles.ScoreStyle(g.HomeTeamScore, g.VisitorTeamScore), styles.DescStyle(status), styles.DescStyle(g.ArenaName))
+		desc = styles.DescText.Render(desc)
 	}
 
 	return desc
