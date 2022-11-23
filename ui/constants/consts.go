@@ -14,9 +14,9 @@ var (
 	// P the current tea program
 	P *tea.Program
 	// Er the entry repository for the tui
-	Gm *nba.Game
+	Gm *nba.BoxScoreSummary
 	// Pr the project repository for the tui
-	Sb *nba.ScoreboardRepository
+	Sb *nba.BoxScoreSummaryRepository
 	// WindowSize store the size of the terminal window
 	WindowSize tea.WindowSizeMsg
 )
