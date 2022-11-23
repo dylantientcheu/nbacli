@@ -18,10 +18,10 @@ var hasTomorrow = false
 
 // gameCmd represents the game command
 var gameCmd = &cobra.Command{
-	Use:   "game",
+	Use:   "games",
 	Short: "Get the NBA schedule for a specific date",
 	Run: func(cmd *cobra.Command, args []string) {
-		scbrd := nba.ScoreboardRepository{}
+		scbrd := nba.BoxScoreSummaryRepository{}
 
 		// no date then get today's games
 		dateArg := time.Now()
@@ -43,10 +43,11 @@ var gameCmd = &cobra.Command{
 }
 
 var gameIdCmd = &cobra.Command{
-	Use:   "gameid",
-	Short: "Get the NBA schedule for a specific date",
+	Use:   "game",
+	Short: "Get a single nba game by ID",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		bxScrSummary := nba.BoxScoreSummaryRepository{}
+		bxScrSummary.GetSingleGame()
 	},
 }
 
