@@ -50,7 +50,7 @@ func InitScoreboard(date time.Time) tea.Model {
 	return m
 }
 
-func newScoreboardList(scbrd *nba.BoxScoreSummaryRepository, date time.Time) []list.Item {
+func newScoreboardList(scbrd *nba.ScoreboardRepository, date time.Time) []list.Item {
 	games := scbrd.GetGames(date)
 	return gamesToItems(games)
 }
@@ -73,7 +73,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch {
 		case key.Matches(msg, constants.Keymap.Yesterday):
 			// TODO: add spinners
-			var previousDay nba.BoxScoreSummaryRepository
+			var previousDay nba.ScoreboardRepository
 			m.currentDate = m.currentDate.AddDate(0, 0, -1)
 			games := previousDay.GetGames(m.currentDate)
 			items := gamesToItems(games)
@@ -81,7 +81,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list.SetItems(items)
 		case key.Matches(msg, constants.Keymap.Tomorrow):
 			// TODO: add spinners
-			var nextDay nba.BoxScoreSummaryRepository
+			var nextDay nba.ScoreboardRepository
 			m.currentDate = m.currentDate.AddDate(0, 0, 1)
 			games := nextDay.GetGames(m.currentDate)
 			items := gamesToItems(games)
@@ -94,9 +94,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.gameview = true
 			activeGame := m.list.SelectedItem().(nba.BoxScoreSummary)
 			fmt.Printf("%#v", activeGame.GameId)
-			return m, tea.Quit // enter the game id
-			// entry := InitEntry(constants.Er, activeProject.ID, constants.P)
-			// return entry.Update(constants.WindowSize)
+			gameView := InitGameView(activeGame.GameId)
+			return gameView.Update(constants.WindowSize)
 		default:
 			m.list, cmd = m.list.Update(msg)
 		}
@@ -113,18 +112,10 @@ func (m Model) View() string {
 	return constants.DocStyle.Render(m.list.View() + "\n")
 }
 
-// TODO: use generics
-// gamesToItems convert []model.Project to []list.Item
 func gamesToItems(games []nba.BoxScoreSummary) []list.Item {
 	items := make([]list.Item, len(games))
 	for i, proj := range games {
 		items[i] = list.Item(proj)
 	}
 	return items
-}
-
-func (m Model) getActiveGameID() string {
-	items := m.list.Items()
-	activeItem := items[m.list.Index()]
-	return activeItem.(nba.BoxScoreSummary).GameId
 }

@@ -12,7 +12,7 @@ import (
 )
 
 // StartTea the entry point for the UI. Initializes the model.
-func StartTea(sb nba.BoxScoreSummaryRepository, date time.Time) {
+func StartTea(sb nba.ScoreboardRepository, date time.Time) {
 	if f, err := tea.LogToFile("debug.log", "help"); err != nil {
 		fmt.Println("Couldn't open a file for logging:", err)
 		os.Exit(1)
@@ -28,6 +28,10 @@ func StartTea(sb nba.BoxScoreSummaryRepository, date time.Time) {
 	// constants.Gm = &gm
 
 	m := InitScoreboard(date)
+	UpdateTeaView(m)
+}
+
+func UpdateTeaView(m tea.Model) {
 	constants.P = tea.NewProgram(m, tea.WithAltScreen())
 	if err := constants.P.Start(); err != nil {
 		fmt.Println("Error running program:", err)

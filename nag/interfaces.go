@@ -1,11 +1,51 @@
 package nag
 
-type NewBoxScoreAdvancedResponse struct {
-	PlayerStats []Stat `mapstructure:"PlayerStats"`
-	TeamStats   []Stat `mapstructure:"TeamStats"`
+type BoxScoreTraditionalResponse struct {
+	PlayerStats           []Stat `mapstructure:"PlayerStats"`
+	TeamStats             []Stat `mapstructure:"TeamStats"`
+	TeamStarterBenchStats []Stat `mapstructure:"TeamStarterBenchStats"`
 }
 
 type Stat struct {
+	GameID           string  `mapstructure:"GAME_ID"`
+	TeamID           int64   `mapstructure:"TEAM_ID"`
+	TeamAbbreviation string  `mapstructure:"TEAM_ABBREVIATION"`
+	TeamCity         string  `mapstructure:"TEAM_CITY"`
+	PlayerID         int64   `mapstructure:"PLAYER_ID,omitempty"`
+	PlayerName       string  `mapstructure:"PLAYER_NAME,omitempty"`
+	Nickname         string  `mapstructure:"NICKNAME,omitempty"`
+	StartPosition    string  `mapstructure:"START_POSITION,omitempty"`
+	Comment          string  `mapstructure:"COMMENT,omitempty"`
+	Min              string  `mapstructure:"MIN"`
+	Fgm              int64   `mapstructure:"FGM"`
+	Fga              int64   `mapstructure:"FGA"`
+	FgPct            float64 `mapstructure:"FG_PCT"`
+	Fg3M             int64   `mapstructure:"FG3M"`
+	Fg3A             int64   `mapstructure:"FG3A"`
+	Fg3Pct           float64 `mapstructure:"FG3_PCT"`
+	Ftm              int64   `mapstructure:"FTM"`
+	Fta              int64   `mapstructure:"FTA"`
+	FtPct            float64 `mapstructure:"FT_PCT"`
+	Oreb             int64   `mapstructure:"OREB"`
+	Dreb             int64   `mapstructure:"DREB"`
+	Reb              int64   `mapstructure:"REB"`
+	AST              int64   `mapstructure:"AST"`
+	Stl              int64   `mapstructure:"STL"`
+	Blk              int64   `mapstructure:"BLK"`
+	To               int64   `mapstructure:"TO"`
+	Pf               int64   `mapstructure:"PF"`
+	Pts              int64   `mapstructure:"PTS"`
+	PlusMinus        int64   `mapstructure:"PLUS_MINUS"`
+	TeamName         string  `mapstructure:"TEAM_NAME,omitempty"`
+	StartersBench    string  `mapstructure:"STARTERS_BENCH,omitempty"`
+}
+
+type NewBoxScoreAdvancedResponse struct {
+	PlayerStats []AdvStat `mapstructure:"PlayerStats"`
+	TeamStats   []AdvStat `mapstructure:"TeamStats"`
+}
+
+type AdvStat struct {
 	GameID           string  `mapstructure:"GAME_ID"`
 	TeamID           int64   `mapstructure:"TEAM_ID"`
 	TeamAbbreviation string  `mapstructure:"TEAM_ABBREVIATION"`

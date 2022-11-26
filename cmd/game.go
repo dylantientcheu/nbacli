@@ -21,7 +21,7 @@ var gameCmd = &cobra.Command{
 	Use:   "games",
 	Short: "Get the NBA schedule for a specific date",
 	Run: func(cmd *cobra.Command, args []string) {
-		scbrd := nba.BoxScoreSummaryRepository{}
+		scbrd := nba.ScoreboardRepository{}
 
 		// no date then get today's games
 		dateArg := time.Now()
@@ -46,8 +46,8 @@ var gameIdCmd = &cobra.Command{
 	Use:   "game",
 	Short: "Get a single nba game by ID",
 	Run: func(cmd *cobra.Command, args []string) {
-		bxScrSummary := nba.BoxScoreSummaryRepository{}
-		bxScrSummary.GetSingleGame()
+		bxScrSummary := nba.BoxScoreRepository{}
+		bxScrSummary.GetSingleGameStats("0022200248")
 	},
 }
 

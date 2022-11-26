@@ -12,7 +12,7 @@ import (
 	"nba-cli/styles"
 )
 
-type Game struct {
+type BoxScoreSummary struct {
 	GameId           string
 	GameDate         string
 	GameStatus       string
@@ -60,7 +60,7 @@ func (g BoxScoreSummary) FilterValue() string { return g.HomeTeamName + " vs " +
 type ScoreboardRepository struct {
 }
 
-func (g *BoxScoreSummaryRepository) GetGames(date time.Time) (scbrd []BoxScoreSummary) {
+func (g *ScoreboardRepository) GetGames(date time.Time) []BoxScoreSummary {
 	sbv2 := nag.NewScoreBoardV2(date)
 	err := sbv2.Get()
 	if err != nil {
@@ -114,27 +114,4 @@ func (g *BoxScoreSummaryRepository) GetGames(date time.Time) (scbrd []BoxScoreSu
 		games = append(games, game)
 	}
 	return games
-}
-
-func (g *BoxScoreSummaryRepository) GetGameById(gameId string) {
-	sbv2 := nag.NewBoxScoreAdvancedV2(gameId)
-	err := sbv2.Get()
-
-	if err != nil {
-		panic(err)
-	}
-
-	if sbv2.Response == nil {
-		panic("nil response")
-	}
-
-	// m := nag.Map(*sbv2.Response)
-	n := nag.Map(*sbv2.Response)
-	h := n["GameHeader"].([]map[string]interface{})
-
-	for _, v := range h {
-		fmt.Println(v["GAME_ID"])
-	}
-
-	// return n
 }
