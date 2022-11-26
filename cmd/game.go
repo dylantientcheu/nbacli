@@ -12,7 +12,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// args
 var date = ""
+var gameID = ""
+
 var hasYesterday = false
 var hasTomorrow = false
 
@@ -43,11 +46,14 @@ var gameCmd = &cobra.Command{
 }
 
 var gameIdCmd = &cobra.Command{
-	Use:   "game",
+	Use:   "specific",
 	Short: "Get a single nba game by ID",
 	Run: func(cmd *cobra.Command, args []string) {
 		bxScrSummary := nba.BoxScoreRepository{}
-		bxScrSummary.GetSingleGameStats("0022200248")
+
+		bxScrSummary.GetSingleGameStats(gameID)
+
+		// TODO: start TUI for single game
 	},
 }
 
@@ -57,6 +63,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&date, "date", "d", "", "Date to get the schedule for (YYYYMMDD)")
 	rootCmd.PersistentFlags().BoolVarP(&hasYesterday, "yesterday", "y", false, "Get yesterday's games")
 	rootCmd.PersistentFlags().BoolVarP(&hasTomorrow, "tomorrow", "t", false, "Get tomorrow's games")
+	rootCmd.PersistentFlags().StringVarP(&gameID, "game", "g", "", "Get a single game by ID")
 
 	rootCmd.MarkFlagsMutuallyExclusive("yesterday", "tomorrow", "date")
 }

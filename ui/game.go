@@ -2,6 +2,7 @@ package ui
 
 import (
 	"nba-cli/nba"
+	"nba-cli/styles"
 	"nba-cli/ui/constants"
 	"strconv"
 
@@ -51,18 +52,18 @@ func (m EntryModel) View() string {
 func InitGameView(activeGameID string) *EntryModel {
 	columns := []table.Column{
 		{Title: "POS", Width: 2},
-		{Title: "NAME", Width: 15},
+		{Title: "NAME", Width: 16},
 		{Title: "MIN", Width: 6},
 		{Title: "FG", Width: 6},
-		{Title: "3PT", Width: 4},
-		{Title: "FT", Width: 4},
-		{Title: "REB", Width: 4},
-		{Title: "AST", Width: 4},
-		{Title: "STL", Width: 4},
-		{Title: "BLK", Width: 4},
-		{Title: "TO", Width: 4},
+		{Title: "3PT", Width: 3},
+		{Title: "FT", Width: 3},
+		{Title: "REB", Width: 3},
+		{Title: "AST", Width: 3},
+		{Title: "STL", Width: 3},
+		{Title: "BLK", Width: 3},
+		{Title: "TO", Width: 3},
 		{Title: "+/-", Width: 4},
-		{Title: "PTS", Width: 4},
+		{Title: "PTS", Width: 3},
 	}
 
 	rows := newStatsBoard(constants.Gm, activeGameID)
@@ -73,6 +74,16 @@ func InitGameView(activeGameID string) *EntryModel {
 		table.WithFocused(true),
 		table.WithHeight(12),
 	)
+
+	// TODO: Add more styles
+	// - Game Score
+	// - Team Name
+	// - Team Color (optional)
+	// - Logo (optional)
+	// - Separate Benchers from Starters
+	// - Add a header for each section
+	// - Separate teams by tables
+	// - Handle non active games
 
 	s := table.DefaultStyles()
 	s.Header = s.Header.
@@ -88,19 +99,24 @@ func InitGameView(activeGameID string) *EntryModel {
 
 	m := EntryModel{t, activeGameID}
 	return &m
-	// UpdateTeaView(m)
-	// m := model{t}
 }
 
 func newStatsBoard(game *nba.BoxScoreRepository, gameID string) []table.Row {
-	hey := "0022200248"
-	gameStats := game.GetSingleGameStats(hey)
+	// testId := "0022200248"
+	gameStats := game.GetSingleGameStats(gameID)
 	return statsToRows(gameStats)
 }
 
 func statsToRows(gameStats []nba.GameStat) []table.Row {
 	var rows []table.Row
+	areBenchers := false
+
 	for _, stat := range gameStats {
+		// format plus minus
+		plusMinus := "0"
+		if stat.PlusMinus > 0 {
+			plusMinus = "+" + strconv.FormatInt(stat.PlusMinus, 10)
+		}
 		rows = append(rows, table.Row{
 			stat.StartPosition, // POS - C
 			stat.PlayerName,    // NAME - LeBron James
@@ -113,9 +129,14 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 			strconv.FormatInt(stat.Stl, 10),                                         // STL - 10
 			strconv.FormatInt(stat.Blk, 10),                                         // BLK - 10
 			strconv.FormatInt(stat.To, 10),                                          // TO - 10
-			strconv.FormatInt(stat.PlusMinus, 10),                                   // +/- - 10
+			plusMinus,                                                               // +/- - 10
 			strconv.FormatInt(stat.Pts, 10),                                         // PTS - 10
 		})
+
+		if (stat.StartPosition == "") && !areBenchers {
+			rows = append(rows, table.Row{"", styles.ScoreText.Render("BENCH"), "", "", "", "", "", "", "", "", "", "", ""})
+			areBenchers = true
+		}
 	}
 	return rows
 }
