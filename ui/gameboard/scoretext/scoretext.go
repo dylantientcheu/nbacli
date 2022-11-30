@@ -22,77 +22,79 @@ var (
 	scoreTextStyle = lipgloss.NewStyle().
 			Padding(0, 1).
 			MarginTop(1)
+
+	teamNameStyle = lipgloss.NewStyle().Margin(0, 1)
 )
 
 // gotten from https://fsymbols.com/generators/tarty/
 
 var scoreTextFont = map[int]string{
-	420: `░░░░░░
-░░░░░░
+	420: `      
+      
 █████╗
 ╚════╝
-░░░░░░
-░░░░░░`,
-	0: `░█████╗░
+      
+      `,
+	0: ` █████╗ 
 ██╔══██╗
-██║░░██║
-██║░░██║
+██║  ██║
+██║  ██║
 ╚█████╔╝
-░╚════╝░`,
-	1: `░░███╗░░
-░████║░░
-██╔██║░░
-╚═╝██║░░
+ ╚════╝ `,
+	1: `  ███╗  
+ ████║  
+██╔██║  
+╚═╝██║  
 ███████╗
 ╚══════╝`,
-	2: `██████╗░
+	2: `██████╗ 
 ╚════██╗
-░░███╔═╝
-██╔══╝░░
+  ███╔═╝
+██╔══╝  
 ███████╗
 ╚══════╝`,
-	3: `██████╗░
+	3: `██████╗ 
 ╚════██╗
-░█████╔╝
-░╚═══██╗
+ █████╔╝
+ ╚═══██╗
 ██████╔╝
-╚═════╝░`,
-	4: `░░██╗██╗
-░██╔╝██║
-██╔╝░██║
+╚═════╝ `,
+	4: `  ██╗██╗
+ ██╔╝██║
+██╔╝ ██║
 ███████║
 ╚════██║
-░░░░░╚═╝`,
+     ╚═╝`,
 	5: `███████╗
 ██╔════╝
-██████╗░
+██████╗ 
 ╚════██╗
 ██████╔╝
-╚═════╝░`,
-	6: `░█████╗░
-██╔═══╝░
-██████╗░
+╚═════╝ `,
+	6: ` █████╗ 
+██╔═══╝ 
+██████╗ 
 ██╔══██╗
 ╚█████╔╝
-░╚════╝░`,
+ ╚════╝ `,
 	7: `███████╗
 ╚════██║
-░░░░██╔╝
-░░░██╔╝░
-░░██╔╝░░
-░░╚═╝░░░`,
-	8: `░█████╗░
+    ██╔╝
+   ██╔╝ 
+  ██╔╝  
+  ╚═╝   `,
+	8: ` █████╗ 
 ██╔══██╗
 ╚█████╔╝
 ██╔══██╗
 ╚█████╔╝
-░╚════╝░`,
-	9: `░█████╗░
+ ╚════╝ `,
+	9: ` █████╗ 
 ██╔══██╗
 ╚██████║
-░╚═══██║
-░█████╔╝
-░╚════╝░`,
+ ╚═══██║
+ █████╔╝
+ ╚════╝ `,
 }
 
 func RenderScoreText(score string) string {
@@ -101,21 +103,19 @@ func RenderScoreText(score string) string {
 
 	{
 		// game board
-		scoreTeamHome := lipgloss.JoinHorizontal(lipgloss.Top, getBigScoreText(98), getBigScoreText(420))
-		scoreAwayTeam := getBigScoreText(96)
+		scoreTeamHome := lipgloss.JoinHorizontal(lipgloss.Center, teamNameStyle.Render("Houston\nRockets\n(55-65)"), lipgloss.JoinHorizontal(lipgloss.Top, getBigScoreText(98), getBigScoreText(420)))
+		scoreAwayTeam := lipgloss.JoinHorizontal(lipgloss.Center, getBigScoreText(96), teamNameStyle.Render("Golden State\nWarriors\n(50-67)"))
 
 		scoreText := lipgloss.JoinHorizontal(lipgloss.Center, scoreTeamHome, scoreAwayTeam)
 
 		stadium := lipgloss.NewStyle().Width(90).Align(lipgloss.Center).Render("Toyota Center | Houston, TX\n22 Oct 2021")
 
-		score := lipgloss.NewStyle().Width(80).MarginTop(2).Align(lipgloss.Center).Render("Houston Rockets          Golden State Warriors")
-		gameInfo := lipgloss.JoinVertical(lipgloss.Center, stadium, score)
-		ui := lipgloss.JoinVertical(lipgloss.Center, gameInfo, scoreText)
+		ui := lipgloss.JoinVertical(lipgloss.Center, stadium, scoreText)
 
-		gameBoard := lipgloss.Place(width, 18,
-			lipgloss.Center, lipgloss.Top,
+		gameBoard := lipgloss.Place(width, 17,
+			lipgloss.Center, lipgloss.Center,
 			dialogBoxStyle.Render(ui),
-			lipgloss.WithWhitespaceChars("篮球"),
+			lipgloss.WithWhitespaceChars("░"),
 			lipgloss.WithWhitespaceForeground(subtle),
 		)
 

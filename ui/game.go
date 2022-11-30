@@ -6,19 +6,46 @@ import (
 	"nba-cli/ui/gameboard/scoretext"
 	"strconv"
 
-	"github.com/charmbracelet/bubbles/table"
+	"github.com/evertras/bubble-table/table"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
 var baseStyle = lipgloss.NewStyle().
-	BorderStyle(lipgloss.NormalBorder()).
-	BorderForeground(lipgloss.Color("240"))
+	BorderStyle(lipgloss.RoundedBorder()).
+	BorderForeground(lipgloss.Color("#874BFD"))
+
+var (
+	customBorder = table.Border{
+		Top:    "─",
+		Left:   "│",
+		Right:  "│",
+		Bottom: "─",
+
+		TopRight:    "╮",
+		TopLeft:     "╭",
+		BottomRight: "╯",
+		BottomLeft:  "╰",
+
+		TopJunction:    "┬",
+		LeftJunction:   "├",
+		RightJunction:  "┤",
+		BottomJunction: "┴",
+		InnerJunction:  "┼",
+
+		InnerDivider: "│",
+	}
+)
 
 type GameModel struct {
-	table         table.Model
-	activeGameID  string
-	width, height int
+	table                 table.Model
+	activeGameID          string
+	width, height, margin int
+}
+
+func (m *GameModel) recalculateTable() {
+	m.table = m.table.WithTargetWidth(m.width - 3)
 }
 
 func (m GameModel) Init() tea.Cmd { return nil }
@@ -29,64 +56,51 @@ func (m GameModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "esc":
-			if m.table.Focused() {
-				m.table.Blur()
-			} else {
-				m.table.Focus()
-			}
+			// return to previous page
+			return m, tea.Quit
 		case "q", "ctrl+c":
 			return m, tea.Quit
 		case "enter":
 			return m, tea.Batch(
-				tea.Printf("Let's go to %s!", m.table.SelectedRow()[1]),
+				tea.Printf("Let's go to %s!", m.table.GetFocused()),
 			)
 		}
+	case tea.WindowSizeMsg:
+		m.width = msg.Width
+		m.recalculateTable()
 	}
+
 	m.table, cmd = m.table.Update(msg)
 	return m, cmd
 }
 
 func (m GameModel) View() string {
-	/* if m.width == 0 || m.height == 0 {
-		return "Initializing..."
-	}
-
-	fullScreenMsgStyle := lipgloss.NewStyle().Width(m.width).Height(m.height).Align(lipgloss.Center, lipgloss.Center)
-
-	minWidth := 102
-	minHeight := 35
-	if m.width < minWidth || m.height < minHeight {
-		return fullScreenMsgStyle.Render(fmt.Sprintf("❌ Need at least %d columns and %d rows to render.\n\nResize terminal or press q to quit.", minWidth, minHeight))
-	} */
-
-	return scoretext.RenderScoreText("hello")
+	table := m.table.View() + "\n"
+	return scoretext.RenderScoreText("") + table
 }
 
 func InitGameView(activeGameID string) *GameModel {
 	columns := []table.Column{
-		{Title: "POS", Width: 2},
-		{Title: "NAME", Width: 16},
-		{Title: "MIN", Width: 6},
-		{Title: "FG", Width: 6},
-		{Title: "3PT", Width: 3},
-		{Title: "FT", Width: 3},
-		{Title: "REB", Width: 3},
-		{Title: "AST", Width: 3},
-		{Title: "STL", Width: 3},
-		{Title: "BLK", Width: 3},
-		{Title: "TO", Width: 3},
-		{Title: "+/-", Width: 4},
-		{Title: "PTS", Width: 3},
+		table.NewFlexColumn("POS", "POS", 2),
+		table.NewFlexColumn("NAME", "NAME", 10),
+		table.NewFlexColumn("MIN", "MIN", 6),
+		table.NewFlexColumn("FG", "FG", 6),
+		table.NewFlexColumn("3PT", "3PT", 3),
+		table.NewFlexColumn("FT", "FT", 3),
+		table.NewFlexColumn("REB", "REB", 3),
+		table.NewFlexColumn("AST", "AST", 3),
+		table.NewFlexColumn("STL", "STL", 3),
+		table.NewFlexColumn("BLK", "BLK", 3),
+		table.NewFlexColumn("TO", "TO", 3),
+		table.NewFlexColumn("+/-", "+/-", 4),
+		table.NewFlexColumn("PTS", "PTS", 3),
 	}
 
 	rows := newStatsBoard(constants.Gm, activeGameID)
 
-	t := table.New(
-		table.WithColumns(columns),
-		table.WithRows(rows),
-		table.WithFocused(true),
-		table.WithHeight(12),
-	)
+	t := table.New(columns).WithRows(rows).
+		Focused(true).
+		Border(customBorder).WithBaseStyle(baseStyle).WithPageSize(constants.WindowSize.Height / 3)
 
 	// TODO: Add more styles
 	// - Game Score
@@ -98,24 +112,11 @@ func InitGameView(activeGameID string) *GameModel {
 	// - Separate teams by tables
 	// - Handle non active games
 
-	s := table.DefaultStyles()
-	s.Header = s.Header.
-		BorderStyle(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.Color("240")).
-		BorderBottom(true).
-		Bold(false)
-	s.Selected = s.Selected.
-		Foreground(lipgloss.Color("229")).
-		Background(lipgloss.Color("57")).
-		Bold(false)
-	t.SetStyles(s)
-
-	m := GameModel{t, activeGameID, constants.WindowSize.Height, constants.WindowSize.Width}
+	m := GameModel{t, activeGameID, constants.WindowSize.Height, constants.WindowSize.Width, 3}
 	return &m
 }
 
 func newStatsBoard(game *nba.BoxScoreRepository, gameID string) []table.Row {
-	// testId := "0022200248"
 	gameStats := game.GetSingleGameStats(gameID)
 	return statsToRows(gameStats)
 }
@@ -124,31 +125,93 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 	var rows []table.Row
 	areBenchers := false
 
-	for _, stat := range gameStats {
+	rows = append(rows, table.NewRow(
+		table.RowData{
+			"POS":  "",
+			"NAME": table.NewStyledCell("Home Team", lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "0", Dark: "201"}).Padding(1)),
+			"MIN":  "",
+			"FG":   "",
+			"3PT":  "",
+			"FT":   "",
+			"REB":  "",
+			"AST":  "",
+			"STL":  "",
+			"BLK":  "",
+			"TO":   "",
+			"+/-":  "",
+			"PTS":  "",
+		},
+	).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "214", Dark: "#343434"}).Padding(1)))
+
+	for idx, stat := range gameStats {
 		// format plus minus
 		plusMinus := "0"
 		if stat.PlusMinus > 0 {
 			plusMinus = "+" + strconv.FormatInt(stat.PlusMinus, 10)
+		} else {
+			plusMinus = strconv.FormatInt(stat.PlusMinus, 10)
 		}
-		rows = append(rows, table.Row{
-			stat.StartPosition, // POS - C
-			stat.PlayerName,    // NAME - LeBron James
-			stat.Min,           // MIN - 36:00
-			strconv.FormatInt(stat.Fgm, 10) + "-" + strconv.FormatInt(stat.Fga, 10), // FG - 10-20
-			strconv.FormatInt(stat.Fg3M, 10),                                        // 3PT - 2-5
-			strconv.FormatInt(stat.Ftm, 10),                                         // FT - 10-10
-			strconv.FormatInt(stat.Reb, 10),                                         // REB - 10
-			strconv.FormatInt(stat.AST, 10),                                         // AST - 10
-			strconv.FormatInt(stat.Stl, 10),                                         // STL - 10
-			strconv.FormatInt(stat.Blk, 10),                                         // BLK - 10
-			strconv.FormatInt(stat.To, 10),                                          // TO - 10
-			plusMinus,                                                               // +/- - 10
-			strconv.FormatInt(stat.Pts, 10),                                         // PTS - 10
-		})
 
 		if (stat.StartPosition == "") && !areBenchers {
-			rows = append(rows, table.Row{"", "", "", "", "", "", "", "", "", "", "", "", ""})
+			rows = append(rows, table.NewRow(
+				table.RowData{
+					"POS":  "",
+					"NAME": table.NewStyledCell("B E N C H", lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "0", Dark: "214"}).Padding(0)),
+					"MIN":  "",
+					"FG":   "",
+					"3PT":  "",
+					"FT":   "",
+					"REB":  "",
+					"AST":  "",
+					"STL":  "",
+					"BLK":  "",
+					"TO":   "",
+					"+/-":  "",
+					"PTS":  "",
+				},
+			).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "214", Dark: "#181818"})))
 			areBenchers = true
+		}
+
+		rows = append(rows, table.NewRow(
+			table.RowData{
+				"POS":  stat.StartPosition,
+				"NAME": stat.PlayerName,
+				"MIN":  stat.Min,
+				"FG":   strconv.FormatInt(stat.Fgm, 10) + "-" + strconv.FormatInt(stat.Fga, 10),
+				"3PT":  strconv.FormatInt(stat.Fg3M, 10),
+				"FT":   strconv.FormatInt(stat.Ftm, 10),
+				"REB":  strconv.FormatInt(stat.Reb, 10),
+				"AST":  strconv.FormatInt(stat.AST, 10),
+				"STL":  strconv.FormatInt(stat.Stl, 10),
+				"BLK":  strconv.FormatInt(stat.Blk, 10),
+				"TO":   strconv.FormatInt(stat.To, 10),
+				"+/-":  plusMinus,
+				"PTS":  strconv.FormatInt(stat.Pts, 10),
+			},
+		))
+		if stat.StartPosition != "" {
+			areBenchers = false
+		}
+
+		if idx < len(gameStats)-1 && gameStats[idx].TeamID != gameStats[idx+1].TeamID {
+			rows = append(rows, table.NewRow(
+				table.RowData{
+					"POS":  "",
+					"NAME": table.NewStyledCell("Away Team", lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "0", Dark: "201"}).Padding(1)),
+					"MIN":  "",
+					"FG":   "",
+					"3PT":  "",
+					"FT":   "",
+					"REB":  "",
+					"AST":  "",
+					"STL":  "",
+					"BLK":  "",
+					"TO":   "",
+					"+/-":  "",
+					"PTS":  "",
+				},
+			).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "214", Dark: "#343434"}).Padding(1)))
 		}
 	}
 	return rows
