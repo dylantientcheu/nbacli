@@ -2,8 +2,8 @@ package ui
 
 import (
 	"nba-cli/nba"
-	"nba-cli/styles"
 	"nba-cli/ui/constants"
+	"nba-cli/ui/gameboard/scoretext"
 	"strconv"
 
 	"github.com/charmbracelet/bubbles/table"
@@ -15,14 +15,15 @@ var baseStyle = lipgloss.NewStyle().
 	BorderStyle(lipgloss.NormalBorder()).
 	BorderForeground(lipgloss.Color("240"))
 
-type EntryModel struct {
-	table        table.Model
-	activeGameID string
+type GameModel struct {
+	table         table.Model
+	activeGameID  string
+	width, height int
 }
 
-func (m EntryModel) Init() tea.Cmd { return nil }
+func (m GameModel) Init() tea.Cmd { return nil }
 
-func (m EntryModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m GameModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -45,11 +46,23 @@ func (m EntryModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m EntryModel) View() string {
-	return baseStyle.Render(m.table.View()) + "\n"
+func (m GameModel) View() string {
+	/* if m.width == 0 || m.height == 0 {
+		return "Initializing..."
+	}
+
+	fullScreenMsgStyle := lipgloss.NewStyle().Width(m.width).Height(m.height).Align(lipgloss.Center, lipgloss.Center)
+
+	minWidth := 102
+	minHeight := 35
+	if m.width < minWidth || m.height < minHeight {
+		return fullScreenMsgStyle.Render(fmt.Sprintf("❌ Need at least %d columns and %d rows to render.\n\nResize terminal or press q to quit.", minWidth, minHeight))
+	} */
+
+	return scoretext.RenderScoreText("hello")
 }
 
-func InitGameView(activeGameID string) *EntryModel {
+func InitGameView(activeGameID string) *GameModel {
 	columns := []table.Column{
 		{Title: "POS", Width: 2},
 		{Title: "NAME", Width: 16},
@@ -97,7 +110,7 @@ func InitGameView(activeGameID string) *EntryModel {
 		Bold(false)
 	t.SetStyles(s)
 
-	m := EntryModel{t, activeGameID}
+	m := GameModel{t, activeGameID, constants.WindowSize.Height, constants.WindowSize.Width}
 	return &m
 }
 
@@ -134,7 +147,7 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 		})
 
 		if (stat.StartPosition == "") && !areBenchers {
-			rows = append(rows, table.Row{"", styles.ScoreText.Render("BENCH"), "", "", "", "", "", "", "", "", "", "", ""})
+			rows = append(rows, table.Row{"", "", "", "", "", "", "", "", "", "", "", "", ""})
 			areBenchers = true
 		}
 	}

@@ -50,12 +50,12 @@ var Keymap = keymap{
 		key.WithHelp("enter", "select"),
 	),
 	Yesterday: key.NewBinding(
-		key.WithKeys("i"),
-		key.WithHelp("i", "previous day"),
+		key.WithKeys("i", "left"),
+		key.WithHelp("←/i", "previous day"),
 	),
 	Tomorrow: key.NewBinding(
-		key.WithKeys("o"),
-		key.WithHelp("o", "next day"),
+		key.WithKeys("o", "right"),
+		key.WithHelp("→/o", "next day"),
 	),
 	Back: key.NewBinding(
 		key.WithKeys("esc"),
