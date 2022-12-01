@@ -107,9 +107,9 @@ func InitGameView(activeGameID string) *GameModel {
 	// - Team Name
 	// - Team Color (optional)
 	// - Logo (optional)
-	// - Separate Benchers from Starters
-	// - Add a header for each section
-	// - Separate teams by tables
+	// // - Separate Benchers from Starters
+	// // - Add a header for each section
+	// // - Separate teams by tables (paginate)
 	// - Handle non active games
 
 	m := GameModel{t, activeGameID, constants.WindowSize.Height, constants.WindowSize.Width, 3}
@@ -128,7 +128,7 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 	rows = append(rows, table.NewRow(
 		table.RowData{
 			"POS":  "",
-			"NAME": table.NewStyledCell("Home Team", lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "0", Dark: "201"}).Padding(1)),
+			"NAME": table.NewStyledCell("HOME TEAM", lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "214", Dark: "0"})),
 			"MIN":  "",
 			"FG":   "",
 			"3PT":  "",
@@ -141,7 +141,7 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 			"+/-":  "",
 			"PTS":  "",
 		},
-	).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "214", Dark: "#343434"}).Padding(1)))
+	).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "0", Dark: "214"})))
 
 	for idx, stat := range gameStats {
 		// format plus minus
@@ -198,7 +198,7 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 			rows = append(rows, table.NewRow(
 				table.RowData{
 					"POS":  "",
-					"NAME": table.NewStyledCell("Away Team", lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "0", Dark: "201"}).Padding(1)),
+					"NAME": table.NewStyledCell("AWAY TEAM", lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "214", Dark: "0"})),
 					"MIN":  "",
 					"FG":   "",
 					"3PT":  "",
@@ -211,7 +211,7 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 					"+/-":  "",
 					"PTS":  "",
 				},
-			).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "214", Dark: "#343434"}).Padding(1)))
+			).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "0", Dark: "214"})))
 		}
 	}
 	return rows
