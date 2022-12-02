@@ -94,7 +94,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.gameview = true
 			activeGame := m.list.SelectedItem().(nba.BoxScoreSummary)
 			fmt.Printf("%#v", activeGame.GameId)
-			gameView := InitGameView(activeGame.GameId)
+			gameView := InitGameView(activeGame.GameId, activeGame)
 			return gameView.Update(constants.WindowSize)
 		default:
 			m.list, cmd = m.list.Update(msg)

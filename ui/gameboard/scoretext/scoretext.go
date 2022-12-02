@@ -1,6 +1,7 @@
 package scoretext
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
@@ -97,18 +98,18 @@ var scoreTextFont = map[int]string{
  ╚════╝ `,
 }
 
-func RenderScoreText(score string) string {
+func RenderScoreText(ArenaName string, gameDate string, scoreHome int, scoreAway int, HomeTeamName string, VisitorTeamName string) string {
 	width, _, _ := term.GetSize(int(os.Stdout.Fd()))
 	doc := strings.Builder{}
 
 	{
 		// game board
-		scoreTeamHome := lipgloss.JoinHorizontal(lipgloss.Center, teamNameStyle.Render("Houston\nRockets\n(55-65)"), lipgloss.JoinHorizontal(lipgloss.Top, getBigScoreText(98), getBigScoreText(420)))
-		scoreAwayTeam := lipgloss.JoinHorizontal(lipgloss.Center, getBigScoreText(96), teamNameStyle.Render("Golden State\nWarriors\n(50-67)"))
+		scoreTeamHome := lipgloss.JoinHorizontal(lipgloss.Center, teamNameStyle.Render(HomeTeamName), lipgloss.JoinHorizontal(lipgloss.Top, getBigScoreText(scoreHome), getBigScoreText(420)))
+		scoreAwayTeam := lipgloss.JoinHorizontal(lipgloss.Center, getBigScoreText(scoreAway), teamNameStyle.Render(VisitorTeamName))
 
 		scoreText := lipgloss.JoinHorizontal(lipgloss.Center, scoreTeamHome, scoreAwayTeam)
 
-		stadium := lipgloss.NewStyle().Width(90).Align(lipgloss.Center).Render("Toyota Center | Houston, TX\n22 Oct 2021")
+		stadium := lipgloss.NewStyle().Width(90).Align(lipgloss.Center).Render(fmt.Sprintf("%s\n%s", ArenaName, gameDate[:len(gameDate)-9]))
 
 		ui := lipgloss.JoinVertical(lipgloss.Center, stadium, scoreText)
 
