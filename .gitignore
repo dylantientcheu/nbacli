@@ -19,3 +19,6 @@ vendor/
 
 # Go workspace file
 go.work
+
+# Logs
+*.log

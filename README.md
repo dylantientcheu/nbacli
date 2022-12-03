@@ -7,6 +7,8 @@
   <img src="https://forthebadge.com/images/badges/made-with-go.svg">
   <img src="screenshots/nba-cli.svg">
 </p>
+
+<img src="screenshots/demo.gif">
 </div>
 
 ## ⚡️ Features
