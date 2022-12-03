@@ -1,10 +1,10 @@
 package nba
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"strings"
 	"time"
 )
@@ -24,16 +24,15 @@ type Team struct {
 	DivName        string `json:"divName"`
 }
 
+//go:embed teams.json
+var f embed.FS
+
 func GetTeamByIdOrTricode(id int64, tricode string) (Team, error) {
-	cwd, err := os.Getwd()
+
+	jsonFile, err := f.Open("teams.json")
+
 	if err != nil {
 		panic(err)
-	}
-
-	jsonFile, err := os.Open(cwd + "/static/teams.json")
-
-	if err != nil {
-		fmt.Println(err)
 	}
 
 	defer jsonFile.Close()
