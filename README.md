@@ -36,8 +36,7 @@ nbacli games
 ```
 
 > **Note**
-> When building from source, make sure that `$GOPATH/bin` is in your `PATH` environment variable and
-> that you are using the latest version of [`less`](http://greenwoodsoftware.com/less/).
+> When building from source, make sure that `$GOPATH/bin` is in your `PATH` environment variable
 
 ### Homebrew
 
