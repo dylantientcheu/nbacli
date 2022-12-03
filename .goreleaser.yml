@@ -3,6 +3,7 @@ builds:
     goos:
       - darwin
       - linux
+      - windows
     goarch:
       - amd64
       - arm64
@@ -23,7 +24,7 @@ brews:
     homepage: https://github.com/dylantientcheu/nbacli
     tap:
       owner: dylantientcheu
-      name: homebrew-nbacli
+      name: homebrew-dylantientcheu
     commit_author:
       name: dylantientcheu
       email: dylantientcheu@gmail.com
