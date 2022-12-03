@@ -1,9 +1,9 @@
 package ui
 
 import (
-	"nba-cli/nba"
-	"nba-cli/ui/constants"
-	"nba-cli/ui/gameboard/scoretext"
+	"nbacli/nba"
+	"nbacli/ui/constants"
+	"nbacli/ui/gameboard/scoretext"
 	"strconv"
 
 	"github.com/evertras/bubble-table/table"
@@ -46,12 +46,10 @@ type keyMap struct {
 	Previous key.Binding
 }
 
-// FullHelp implements help.KeyMap
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{k.ShortHelp()}
 }
 
-// ShortHelp implements help.KeyMap
 func (k keyMap) ShortHelp() []key.Binding {
 	return []key.Binding{k.Down, k.Up, k.Previous}
 }
@@ -82,9 +80,8 @@ func (m GameModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c":
 			return m, tea.Quit
 		case "enter":
-			return m, tea.Batch(
-				tea.Printf("Let's go to %s!", m.table.GetFocused()),
-			)
+			// TODO: to player view
+			return m, tea.Batch()
 		}
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
@@ -161,23 +158,7 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 	var rows []table.Row
 	areBenchers := false
 
-	rows = append(rows, table.NewRow(
-		table.RowData{
-			"POS":  "",
-			"NAME": table.NewStyledCell("AWAY TEAM", lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "214", Dark: "0"})),
-			"MIN":  "",
-			"FG":   "",
-			"3PT":  "",
-			"FT":   "",
-			"REB":  "",
-			"AST":  "",
-			"STL":  "",
-			"BLK":  "",
-			"TO":   "",
-			"+/-":  "",
-			"PTS":  "",
-		},
-	).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "0", Dark: "214"})))
+	rows = append(rows, table.NewRow(renderTeamRow("AWAY TEAM")).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "0", Dark: "214"})))
 
 	for idx, stat := range gameStats {
 		// format plus minus
@@ -190,21 +171,7 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 
 		if (stat.StartPosition == "") && !areBenchers {
 			rows = append(rows, table.NewRow(
-				table.RowData{
-					"POS":  "",
-					"NAME": table.NewStyledCell("B E N C H", lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "0", Dark: "214"}).Padding(0)),
-					"MIN":  "",
-					"FG":   "",
-					"3PT":  "",
-					"FT":   "",
-					"REB":  "",
-					"AST":  "",
-					"STL":  "",
-					"BLK":  "",
-					"TO":   "",
-					"+/-":  "",
-					"PTS":  "",
-				},
+				renderBenchRow(),
 			).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "214", Dark: "#181818"})))
 			areBenchers = true
 		}
@@ -231,24 +198,44 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 		}
 
 		if idx < len(gameStats)-1 && gameStats[idx].TeamID != gameStats[idx+1].TeamID {
-			rows = append(rows, table.NewRow(
-				table.RowData{
-					"POS":  "",
-					"NAME": table.NewStyledCell("HOME TEAM", lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "214", Dark: "0"})),
-					"MIN":  "",
-					"FG":   "",
-					"3PT":  "",
-					"FT":   "",
-					"REB":  "",
-					"AST":  "",
-					"STL":  "",
-					"BLK":  "",
-					"TO":   "",
-					"+/-":  "",
-					"PTS":  "",
-				},
-			).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "0", Dark: "214"})))
+			rows = append(rows, table.NewRow(renderTeamRow("HOME TEAM")).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "0", Dark: "214"})))
 		}
 	}
 	return rows
+}
+
+func renderBenchRow() table.RowData {
+	return table.RowData{
+		"POS":  "",
+		"NAME": table.NewStyledCell("B E N C H", lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "0", Dark: "214"}).Padding(0)),
+		"MIN":  "",
+		"FG":   "",
+		"3PT":  "",
+		"FT":   "",
+		"REB":  "",
+		"AST":  "",
+		"STL":  "",
+		"BLK":  "",
+		"TO":   "",
+		"+/-":  "",
+		"PTS":  "",
+	}
+}
+
+func renderTeamRow(team string) table.RowData {
+	return table.RowData{
+		"POS":  "",
+		"NAME": table.NewStyledCell(team, lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "214", Dark: "0"})),
+		"MIN":  "",
+		"FG":   "",
+		"3PT":  "",
+		"FT":   "",
+		"REB":  "",
+		"AST":  "",
+		"STL":  "",
+		"BLK":  "",
+		"TO":   "",
+		"+/-":  "",
+		"PTS":  "",
+	}
 }
