@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"nba-cli/nag/params"
+	"nbacli/nag/params"
 )
 
 // probably PBT here

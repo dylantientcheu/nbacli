@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"nba-cli/nag/params"
+	"nbacli/nag/params"
 )
 
 // BoxScoreTraditionalV2 wraps request to and response from boxscoretraditionalv2 endpoint.

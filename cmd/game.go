@@ -5,20 +5,23 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"nba-cli/nba"
-	"nba-cli/ui"
+	"nbacli/nba"
+	"nbacli/ui"
 	"time"
 
 	"github.com/spf13/cobra"
 )
 
+// args
 var date = ""
+var gameID = ""
+
 var hasYesterday = false
 var hasTomorrow = false
 
 // gameCmd represents the game command
 var gameCmd = &cobra.Command{
-	Use:   "game",
+	Use:   "games",
 	Short: "Get the NBA schedule for a specific date",
 	Run: func(cmd *cobra.Command, args []string) {
 		scbrd := nba.ScoreboardRepository{}
@@ -42,11 +45,15 @@ var gameCmd = &cobra.Command{
 	},
 }
 
+// todo: get single game search or id
 var gameIdCmd = &cobra.Command{
-	Use:   "gameid",
-	Short: "Get the NBA schedule for a specific date",
+	Use:   "specific",
+	Short: "Get a single nba game by ID",
 	Run: func(cmd *cobra.Command, args []string) {
+		bxScrSummary := nba.BoxScoreRepository{}
+		bxScrSummary.GetSingleGameStats(gameID)
 
+		// TODO: start TUI for single game
 	},
 }
 
@@ -56,6 +63,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&date, "date", "d", "", "Date to get the schedule for (YYYYMMDD)")
 	rootCmd.PersistentFlags().BoolVarP(&hasYesterday, "yesterday", "y", false, "Get yesterday's games")
 	rootCmd.PersistentFlags().BoolVarP(&hasTomorrow, "tomorrow", "t", false, "Get tomorrow's games")
+	rootCmd.PersistentFlags().StringVarP(&gameID, "game", "g", "", "Get a single game by ID")
 
 	rootCmd.MarkFlagsMutuallyExclusive("yesterday", "tomorrow", "date")
 }

@@ -1,7 +1,7 @@
 package constants
 
 import (
-	"nba-cli/nba"
+	"nbacli/nba"
 
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
@@ -14,7 +14,7 @@ var (
 	// P the current tea program
 	P *tea.Program
 	// Er the entry repository for the tui
-	Gm *nba.Game
+	Gm *nba.BoxScoreRepository
 	// Pr the project repository for the tui
 	Sb *nba.ScoreboardRepository
 	// WindowSize store the size of the terminal window
@@ -47,15 +47,15 @@ type keymap struct {
 var Keymap = keymap{
 	Enter: key.NewBinding(
 		key.WithKeys("enter"),
-		key.WithHelp("enter", "select"),
+		key.WithHelp("↲/enter", "select"),
 	),
 	Yesterday: key.NewBinding(
-		key.WithKeys("i"),
-		key.WithHelp("i", "previous day"),
+		key.WithKeys("i", "left"),
+		key.WithHelp("←/i", "previous day"),
 	),
 	Tomorrow: key.NewBinding(
-		key.WithKeys("o"),
-		key.WithHelp("o", "next day"),
+		key.WithKeys("o", "right"),
+		key.WithHelp("→/o", "next day"),
 	),
 	Back: key.NewBinding(
 		key.WithKeys("esc"),

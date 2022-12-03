@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"nba-cli/nag/params"
+	"nbacli/nag/params"
 )
 
 // BoxScoreFourFactorsV2 wraps request to and response from boxscorefourfactorsv2 endpoint.

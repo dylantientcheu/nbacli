@@ -3,8 +3,8 @@ package ui
 import (
 	"fmt"
 	"log"
-	"nba-cli/nba"
-	"nba-cli/ui/constants"
+	"nbacli/nba"
+	"nbacli/ui/constants"
 	"os"
 	"time"
 
@@ -25,9 +25,12 @@ func StartTea(sb nba.ScoreboardRepository, date time.Time) {
 		}()
 	}
 	constants.Sb = &sb
-	// constants.Gm = &gm
 
 	m := InitScoreboard(date)
+	UpdateTeaView(m)
+}
+
+func UpdateTeaView(m tea.Model) {
 	constants.P = tea.NewProgram(m, tea.WithAltScreen())
 	if err := constants.P.Start(); err != nil {
 		fmt.Println("Error running program:", err)

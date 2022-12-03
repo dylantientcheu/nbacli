@@ -8,11 +8,11 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/nleeper/goment"
 
-	"nba-cli/nag"
-	"nba-cli/styles"
+	"nbacli/nag"
+	"nbacli/styles"
 )
 
-type Game struct {
+type BoxScoreSummary struct {
 	GameId           string
 	GameDate         string
 	GameStatus       string
@@ -26,10 +26,10 @@ type Game struct {
 	ArenaName        string
 }
 
-func (g Game) Title() string { return g.HomeTeamName + " vs " + g.VisitorTeamName }
+func (g BoxScoreSummary) Title() string { return g.HomeTeamName + " vs " + g.VisitorTeamName }
 
 // Description the game description to display in a list
-func (g Game) Description() string {
+func (g BoxScoreSummary) Description() string {
 	var desc = ""
 	var status = strings.TrimSpace(g.GameStatus)
 	if status[len(status)-2:] == "ET" {
@@ -43,8 +43,8 @@ func (g Game) Description() string {
 		desc = styles.DescStyle(desc)
 	} else if status == "Final" {
 		// passed game
-		gameDate := GetDateFromString(g.GameDate).Format("2006-01-02")
-		desc = fmt.Sprintf("%s  %s | %s", styles.ScoreStyle(g.HomeTeamScore, g.VisitorTeamScore), styles.DescStyle(gameDate), styles.DescStyle(g.ArenaName))
+		// gameDate := GetDateFromString(g.GameDate).Format("2006-01-02")
+		desc = fmt.Sprintf("%s  %s", styles.ScoreStyle(g.HomeTeamScore, g.VisitorTeamScore), styles.DescStyle(g.ArenaName))
 	} else {
 		// live game
 		desc = fmt.Sprintf("%s %s - %s | %s", styles.LiveStyle(), styles.ScoreStyle(g.HomeTeamScore, g.VisitorTeamScore), styles.DescStyle(status), styles.DescStyle(g.ArenaName))
@@ -55,20 +55,12 @@ func (g Game) Description() string {
 }
 
 // FilterValue choose what field to use for filtering in a Bubbletea list component
-func (g Game) FilterValue() string { return g.HomeTeamName + " vs " + g.VisitorTeamName }
-
-type Repository interface {
-	GetGames(date time.Time) (scbrd []Game)
-	// GetGameById(gameId string) (scbrd Game)
-	// CreateProject(name string) (Project, error)
-	// DeleteProject(projectID uint) error
-	// RenameProject(projectID uint) error
-}
+func (g BoxScoreSummary) FilterValue() string { return g.HomeTeamName + " vs " + g.VisitorTeamName }
 
 type ScoreboardRepository struct {
 }
 
-func (g *ScoreboardRepository) GetGames(date time.Time) (scbrd []Game) {
+func (g *ScoreboardRepository) GetGames(date time.Time) []BoxScoreSummary {
 	sbv2 := nag.NewScoreBoardV2(date)
 	err := sbv2.Get()
 	if err != nil {
@@ -83,10 +75,10 @@ func (g *ScoreboardRepository) GetGames(date time.Time) (scbrd []Game) {
 	mapstructure.Decode(n, &result)
 
 	// new games array
-	games := make([]Game, 0, len(result.GameHeader))
+	games := make([]BoxScoreSummary, 0, len(result.GameHeader))
 
 	for _, v := range result.GameHeader {
-		var game Game
+		var game BoxScoreSummary
 		game.GameId = v.GameID
 		game.GameDate = v.GameDateEst
 		game.GameStatus = v.GameStatusText
@@ -122,27 +114,4 @@ func (g *ScoreboardRepository) GetGames(date time.Time) (scbrd []Game) {
 		games = append(games, game)
 	}
 	return games
-}
-
-func (g *ScoreboardRepository) GetGameById(gameId string) {
-	sbv2 := nag.NewBoxScoreAdvancedV2(gameId)
-	err := sbv2.Get()
-
-	if err != nil {
-		panic(err)
-	}
-
-	if sbv2.Response == nil {
-		panic("nil response")
-	}
-
-	// m := nag.Map(*sbv2.Response)
-	n := nag.Map(*sbv2.Response)
-	h := n["GameHeader"].([]map[string]interface{})
-
-	for _, v := range h {
-		fmt.Println(v["GAME_ID"])
-	}
-
-	// return n
 }

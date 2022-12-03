@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"nba-cli/nag/params"
+	"nbacli/nag/params"
 )
 
 // PlayByPlayV2 wraps request to and response from playbyplayv2 endpoint.

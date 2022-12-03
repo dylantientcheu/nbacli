@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"nba-cli/nag/params"
+	"nbacli/nag/params"
 )
 
 // CommonPlayerInfo wraps request to and response from commonplayerinfo endpoint.
