@@ -25,7 +25,12 @@ type Team struct {
 }
 
 func GetTeamByIdOrTricode(id int64, tricode string) (Team, error) {
-	jsonFile, err := os.Open("./static/teams.json")
+	cwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	jsonFile, err := os.Open(cwd + "/static/teams.json")
 
 	if err != nil {
 		fmt.Println(err)
