@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"nba-cli/nba"
 	"nba-cli/ui/constants"
 	"time"
@@ -93,8 +92,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, constants.Keymap.Enter):
 			m.gameview = true
 			activeGame := m.list.SelectedItem().(nba.BoxScoreSummary)
-			fmt.Printf("%#v", activeGame.GameId)
-			gameView := InitGameView(activeGame.GameId, activeGame)
+			gameView := InitGameView(activeGame.GameId, activeGame, m)
 			return gameView.Update(constants.WindowSize)
 		default:
 			m.list, cmd = m.list.Update(msg)

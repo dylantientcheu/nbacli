@@ -42,6 +42,7 @@ type GameModel struct {
 	table                 table.Model
 	activeGameID          string
 	activeGame            nba.BoxScoreSummary
+	previousModel         Model
 	width, height, margin int
 }
 
@@ -56,10 +57,10 @@ func (m GameModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "esc":
+		case "q", "esc":
 			// return to previous page
-			return m, tea.Quit
-		case "q", "ctrl+c":
+			return m.previousModel, tea.Batch()
+		case "ctrl+c":
 			return m, tea.Quit
 		case "enter":
 			return m, tea.Batch(
@@ -77,10 +78,11 @@ func (m GameModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m GameModel) View() string {
 	table := m.table.View() + "\n"
+	// helpText :=
 	return scoretext.RenderScoreText(m.activeGame.ArenaName, m.activeGame.GameDate, m.activeGame.HomeTeamScore, m.activeGame.VisitorTeamScore, m.activeGame.HomeTeamName, m.activeGame.VisitorTeamName) + table
 }
 
-func InitGameView(activeGameID string, activeGame nba.BoxScoreSummary) *GameModel {
+func InitGameView(activeGameID string, activeGame nba.BoxScoreSummary, previousModel Model) *GameModel {
 	columns := []table.Column{
 		table.NewFlexColumn("POS", "POS", 2),
 		table.NewFlexColumn("NAME", "NAME", 10),
@@ -104,8 +106,8 @@ func InitGameView(activeGameID string, activeGame nba.BoxScoreSummary) *GameMode
 		Border(customBorder).WithBaseStyle(baseStyle).WithPageSize(constants.WindowSize.Height / 3)
 
 	// TODO: Add more styles
-	// - Game Score
-	// - Team Name
+	// // - Game Score
+	// // - Team Name
 	// - Team Color (optional)
 	// - Logo (optional)
 	// // - Separate Benchers from Starters
@@ -113,7 +115,7 @@ func InitGameView(activeGameID string, activeGame nba.BoxScoreSummary) *GameMode
 	// // - Separate teams by tables (paginate)
 	// - Handle non active games
 
-	m := GameModel{t, activeGameID, activeGame, constants.WindowSize.Height, constants.WindowSize.Width, 3}
+	m := GameModel{t, activeGameID, activeGame, previousModel, constants.WindowSize.Height, constants.WindowSize.Width, 3}
 	return &m
 }
 
