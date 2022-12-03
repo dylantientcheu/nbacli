@@ -134,17 +134,6 @@ func InitGameView(activeGameID string, activeGame nba.BoxScoreSummary, previousM
 		Focused(true).
 		Border(customBorder).WithBaseStyle(baseStyle).WithPageSize(constants.WindowSize.Height / 3)
 
-	// TODO: Add more styles
-	// // - Game Score
-	// // - Team Name
-	// - Team Color (optional)
-	// - Logo (optional)
-	// // - Separate Benchers from Starters
-	// // - Add a header for each section
-	// // - Separate teams by tables (paginate)
-	// // - Help text
-	// - Handle non active games
-
 	m := GameModel{t, activeGameID, activeGame, previousModel, help.New(), constants.WindowSize.Height, constants.WindowSize.Width, 3}
 	return &m
 }
