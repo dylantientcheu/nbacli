@@ -1,16 +1,25 @@
+before:
+  hooks:
+    - go mod tidy
+
 builds:
   - binary: nbacli
     goos:
       - darwin
       - linux
       - windows
-    goarch:
-      - amd64
-      - arm64
     env:
       - CGO_ENABLED=0
     flags:
       - -mod=vendor
+
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
 
 release:
   prerelease: auto
@@ -26,7 +35,7 @@ brews:
       owner: dylantientcheu
       name: homebrew-dylantientcheu
     commit_author:
-      name: dylantientcheu
+      name: Dylan Tientcheu
       email: dylantientcheu@gmail.com
 
 checksum:
