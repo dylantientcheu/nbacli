@@ -10,8 +10,6 @@ builds:
       - windows
     env:
       - CGO_ENABLED=0
-    flags:
-      - -mod=vendor
 
 archives:
   - replacements:
