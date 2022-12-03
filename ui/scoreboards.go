@@ -12,7 +12,6 @@ import (
 
 type mode int
 
-// SelectMsg the message to change the view to the selected entry
 type SelectMsg struct {
 	ActiveScorebardID uint
 }
@@ -31,7 +30,6 @@ type Model struct {
 }
 
 func InitScoreboard(date time.Time) tea.Model {
-	// TODO: add spinners
 	items := newScoreboardList(constants.Sb, date)
 	m := Model{mode: nav, currentDate: date, list: list.NewModel(items, list.NewDefaultDelegate(), 8, 8)}
 	if constants.WindowSize.Height != 0 {
@@ -71,7 +69,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, constants.Keymap.Yesterday):
-			// TODO: add spinners
 			var previousDay nba.ScoreboardRepository
 			m.currentDate = m.currentDate.AddDate(0, 0, -1)
 			games := previousDay.GetGames(m.currentDate)
@@ -79,7 +76,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.list.Title = "NBA Games - " + m.currentDate.Format("Monday, 2 Jan 06")
 			m.list.SetItems(items)
 		case key.Matches(msg, constants.Keymap.Tomorrow):
-			// TODO: add spinners
 			var nextDay nba.ScoreboardRepository
 			m.currentDate = m.currentDate.AddDate(0, 0, 1)
 			games := nextDay.GetGames(m.currentDate)

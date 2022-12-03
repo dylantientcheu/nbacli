@@ -47,7 +47,7 @@ type keymap struct {
 var Keymap = keymap{
 	Enter: key.NewBinding(
 		key.WithKeys("enter"),
-		key.WithHelp("enter", "select"),
+		key.WithHelp("↲/enter", "select"),
 	),
 	Yesterday: key.NewBinding(
 		key.WithKeys("i", "left"),

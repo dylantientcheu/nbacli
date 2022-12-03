@@ -8,6 +8,8 @@ import (
 
 	"github.com/evertras/bubble-table/table"
 
+	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -38,11 +40,28 @@ var (
 	}
 )
 
+type keyMap struct {
+	Down     key.Binding
+	Up       key.Binding
+	Previous key.Binding
+}
+
+// FullHelp implements help.KeyMap
+func (k keyMap) FullHelp() [][]key.Binding {
+	return [][]key.Binding{k.ShortHelp()}
+}
+
+// ShortHelp implements help.KeyMap
+func (k keyMap) ShortHelp() []key.Binding {
+	return []key.Binding{k.Down, k.Up, k.Previous}
+}
+
 type GameModel struct {
 	table                 table.Model
 	activeGameID          string
 	activeGame            nba.BoxScoreSummary
 	previousModel         Model
+	help                  help.Model
 	width, height, margin int
 }
 
@@ -78,8 +97,21 @@ func (m GameModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m GameModel) View() string {
 	table := m.table.View() + "\n"
+
+	keyMap := keyMap{
+		Down:     key.NewBinding(key.WithKeys("down"), key.WithHelp("↓", "highlight next row")),
+		Up:       key.NewBinding(key.WithKeys("up"), key.WithHelp("↑", "highlight previous row")),
+		Previous: key.NewBinding(key.WithKeys("esc", "q"), key.WithHelp("q/esc", "back to games list")),
+	}
+	helpContainer := lipgloss.NewStyle().
+		SetString(m.help.View(keyMap)).
+		Width(m.width).
+		Align(lipgloss.Center).
+		PaddingTop(1).
+		String()
+
 	// helpText :=
-	return scoretext.RenderScoreText(m.activeGame.ArenaName, m.activeGame.GameDate, m.activeGame.HomeTeamScore, m.activeGame.VisitorTeamScore, m.activeGame.HomeTeamName, m.activeGame.VisitorTeamName) + table
+	return scoretext.RenderScoreText(m.activeGame.ArenaName, m.activeGame.GameDate, m.activeGame.HomeTeamScore, m.activeGame.VisitorTeamScore, m.activeGame.HomeTeamName, m.activeGame.VisitorTeamName) + table + helpContainer
 }
 
 func InitGameView(activeGameID string, activeGame nba.BoxScoreSummary, previousModel Model) *GameModel {
@@ -113,9 +145,10 @@ func InitGameView(activeGameID string, activeGame nba.BoxScoreSummary, previousM
 	// // - Separate Benchers from Starters
 	// // - Add a header for each section
 	// // - Separate teams by tables (paginate)
+	// // - Help text
 	// - Handle non active games
 
-	m := GameModel{t, activeGameID, activeGame, previousModel, constants.WindowSize.Height, constants.WindowSize.Width, 3}
+	m := GameModel{t, activeGameID, activeGame, previousModel, help.New(), constants.WindowSize.Height, constants.WindowSize.Width, 3}
 	return &m
 }
 
