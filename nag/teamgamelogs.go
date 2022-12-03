@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"nbacli/nag/params"
+	"github.com/dylantientcheu/nbacli/nag/params"
 )
 
 // TeamGameLogs wraps request to and response from teamgamelogs endpoint.

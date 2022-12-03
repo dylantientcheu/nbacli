@@ -1,10 +1,11 @@
 package ui
 
 import (
-	"nbacli/nba"
-	"nbacli/ui/constants"
-	"nbacli/ui/gameboard/scoretext"
 	"strconv"
+
+	"github.com/dylantientcheu/nbacli/nba"
+	"github.com/dylantientcheu/nbacli/ui/constants"
+	"github.com/dylantientcheu/nbacli/ui/gameboard/scoretext"
 
 	"github.com/evertras/bubble-table/table"
 

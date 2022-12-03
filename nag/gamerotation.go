@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"nbacli/nag/params"
+	"github.com/dylantientcheu/nbacli/nag/params"
 )
 
 // GameRotation wraps request to and response from gamerotation endpoint.

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"nbacli/nag/params"
+	"github.com/dylantientcheu/nbacli/nag/params"
 )
 
 // AllTimeLeadersGrids wraps request to and response from alltimeleadersgrids endpoint.

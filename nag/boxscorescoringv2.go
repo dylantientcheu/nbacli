@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"nbacli/nag/params"
+	"github.com/dylantientcheu/nbacli/nag/params"
 )
 
 // BoxScoreScoringV2 wraps request to and response from boxscorescoringv2 endpoint.

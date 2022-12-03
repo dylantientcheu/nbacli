@@ -1,9 +1,10 @@
 package ui
 
 import (
-	"nbacli/nba"
-	"nbacli/ui/constants"
 	"time"
+
+	"github.com/dylantientcheu/nbacli/nba"
+	"github.com/dylantientcheu/nbacli/ui/constants"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"

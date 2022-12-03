@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"nbacli/nag/params"
+	"github.com/dylantientcheu/nbacli/nag/params"
 )
 
 // probably PBT here

@@ -5,9 +5,10 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"nbacli/nba"
-	"nbacli/ui"
 	"time"
+
+	"github.com/dylantientcheu/nbacli/nba"
+	"github.com/dylantientcheu/nbacli/ui"
 
 	"github.com/spf13/cobra"
 )

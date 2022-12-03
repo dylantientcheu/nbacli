@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"nbacli/nag/params"
+	"github.com/dylantientcheu/nbacli/nag/params"
 )
 
 // ScoreBoardV2 wraps request to and response from scoreboardv2 endpoint.

@@ -3,7 +3,7 @@ package nba
 import (
 	"github.com/mitchellh/mapstructure"
 
-	"nbacli/nag"
+	"github.com/dylantientcheu/nbacli/nag"
 )
 
 type GameStat struct {

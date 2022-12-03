@@ -3,10 +3,11 @@ package ui
 import (
 	"fmt"
 	"log"
-	"nbacli/nba"
-	"nbacli/ui/constants"
 	"os"
 	"time"
+
+	"github.com/dylantientcheu/nbacli/nba"
+	"github.com/dylantientcheu/nbacli/ui/constants"
 
 	tea "github.com/charmbracelet/bubbletea"
 )

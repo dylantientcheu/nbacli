@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"nbacli/nag/params"
+	"github.com/dylantientcheu/nbacli/nag/params"
 )
 
 // CommonAllPlayers wraps request to and response from commonallplayers endpoint.

@@ -1,4 +1,4 @@
-module nbacli
+module github.com/dylantientcheu/nbacli
 
 go 1.18
 
