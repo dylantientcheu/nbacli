@@ -3,8 +3,8 @@ package ui
 import (
 	"fmt"
 	"log"
-	"nba-cli/nba"
-	"nba-cli/ui/constants"
+	"nbacli/nba"
+	"nbacli/ui/constants"
 	"os"
 	"time"
 
@@ -25,7 +25,6 @@ func StartTea(sb nba.ScoreboardRepository, date time.Time) {
 		}()
 	}
 	constants.Sb = &sb
-	// constants.Gm = &gm
 
 	m := InitScoreboard(date)
 	UpdateTeaView(m)

@@ -8,8 +8,8 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/nleeper/goment"
 
-	"nba-cli/nag"
-	"nba-cli/styles"
+	"nbacli/nag"
+	"nbacli/styles"
 )
 
 type BoxScoreSummary struct {

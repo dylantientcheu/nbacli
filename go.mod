@@ -1,4 +1,4 @@
-module nba-cli
+module nbacli
 
 go 1.18
 

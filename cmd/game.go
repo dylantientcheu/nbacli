@@ -5,8 +5,8 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"nba-cli/nba"
-	"nba-cli/ui"
+	"nbacli/nba"
+	"nbacli/ui"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -45,12 +45,12 @@ var gameCmd = &cobra.Command{
 	},
 }
 
+// todo: get single game search or id
 var gameIdCmd = &cobra.Command{
 	Use:   "specific",
 	Short: "Get a single nba game by ID",
 	Run: func(cmd *cobra.Command, args []string) {
 		bxScrSummary := nba.BoxScoreRepository{}
-
 		bxScrSummary.GetSingleGameStats(gameID)
 
 		// TODO: start TUI for single game

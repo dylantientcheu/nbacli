@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"nba-cli/nag/params"
+	"nbacli/nag/params"
 )
 
 // ScoreBoardV2 wraps request to and response from scoreboardv2 endpoint.

@@ -1,7 +1,7 @@
 package constants
 
 import (
-	"nba-cli/nba"
+	"nbacli/nba"
 
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"

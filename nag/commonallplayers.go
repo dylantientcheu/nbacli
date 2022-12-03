@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"nba-cli/nag/params"
+	"nbacli/nag/params"
 )
 
 // CommonAllPlayers wraps request to and response from commonallplayers endpoint.
