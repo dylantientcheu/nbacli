@@ -43,7 +43,7 @@ nbacli games
 ### Homebrew
 
 ```bash
-brew tap dylantientcheu/nbacli && brew install nbacli
+brew tap dylantientcheu/dylantientcheu && brew install nbacli
 
 # run
 nbacli games
