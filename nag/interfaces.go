@@ -6,6 +6,101 @@ type BoxScoreTraditionalResponse struct {
 	TeamStarterBenchStats []Stat `mapstructure:"TeamStarterBenchStats"`
 }
 
+type LeagueStandingsResponse struct {
+	Standings []Standing `mapstructure:"Standings"`
+}
+
+type Standing struct {
+	LeagueID                string      `mapstructure:"LeagueID"`
+	SeasonID                string      `mapstructure:"SeasonID"`
+	TeamID                  int64       `mapstructure:"TeamID"`
+	TeamCity                string      `mapstructure:"TeamCity"`
+	TeamName                string      `mapstructure:"TeamName"`
+	TeamSlug                string      `mapstructure:"TeamSlug"`
+	Conference              Conference  `mapstructure:"Conference"`
+	ConferenceRecord        string      `mapstructure:"ConferenceRecord"`
+	PlayoffRank             int64       `mapstructure:"PlayoffRank"`
+	ClinchIndicator         string      `mapstructure:"ClinchIndicator"`
+	Division                string      `mapstructure:"Division"`
+	DivisionRecord          string      `mapstructure:"DivisionRecord"`
+	DivisionRank            int64       `mapstructure:"DivisionRank"`
+	WINS                    int64       `mapstructure:"WINS"`
+	Losses                  int64       `mapstructure:"LOSSES"`
+	WinPCT                  float64     `mapstructure:"WinPCT"`
+	LeagueRank              int64       `mapstructure:"LeagueRank"`
+	Record                  string      `mapstructure:"Record"`
+	Home                    string      `mapstructure:"HOME"`
+	Road                    string      `mapstructure:"ROAD"`
+	L10                     string      `mapstructure:"L10"`
+	Last10Home              string      `mapstructure:"Last10Home"`
+	Last10Road              string      `mapstructure:"Last10Road"`
+	Ot                      string      `mapstructure:"OT"`
+	ThreePTSOrLess          string      `mapstructure:"ThreePTSOrLess"`
+	TenPTSOrMore            string      `mapstructure:"TenPTSOrMore"`
+	LongHomeStreak          int64       `mapstructure:"LongHomeStreak"`
+	StrLongHomeStreak       string      `mapstructure:"strLongHomeStreak"`
+	LongRoadStreak          int64       `mapstructure:"LongRoadStreak"`
+	StrLongRoadStreak       string      `mapstructure:"strLongRoadStreak"`
+	LongWinStreak           int64       `mapstructure:"LongWinStreak"`
+	LongLossStreak          int64       `mapstructure:"LongLossStreak"`
+	CurrentHomeStreak       int64       `mapstructure:"CurrentHomeStreak"`
+	StrCurrentHomeStreak    string      `mapstructure:"strCurrentHomeStreak"`
+	CurrentRoadStreak       int64       `mapstructure:"CurrentRoadStreak"`
+	StrCurrentRoadStreak    string      `mapstructure:"strCurrentRoadStreak"`
+	CurrentStreak           int64       `mapstructure:"CurrentStreak"`
+	StrCurrentStreak        string      `mapstructure:"strCurrentStreak"`
+	ConferenceGamesBack     float64     `mapstructure:"ConferenceGamesBack"`
+	DivisionGamesBack       float64     `mapstructure:"DivisionGamesBack"`
+	ClinchedConferenceTitle int64       `mapstructure:"ClinchedConferenceTitle"`
+	ClinchedDivisionTitle   int64       `mapstructure:"ClinchedDivisionTitle"`
+	ClinchedPlayoffBirth    int64       `mapstructure:"ClinchedPlayoffBirth"`
+	ClinchedPlayIn          int64       `mapstructure:"ClinchedPlayIn"`
+	EliminatedConference    int64       `mapstructure:"EliminatedConference"`
+	EliminatedDivision      int64       `mapstructure:"EliminatedDivision"`
+	AheadAtHalf             string      `mapstructure:"AheadAtHalf"`
+	BehindAtHalf            string      `mapstructure:"BehindAtHalf"`
+	TiedAtHalf              string      `mapstructure:"TiedAtHalf"`
+	AheadAtThird            string      `mapstructure:"AheadAtThird"`
+	BehindAtThird           string      `mapstructure:"BehindAtThird"`
+	TiedAtThird             string      `mapstructure:"TiedAtThird"`
+	Score100PTS             string      `mapstructure:"Score100PTS"`
+	OppScore100PTS          string      `mapstructure:"OppScore100PTS"`
+	OppOver500              string      `mapstructure:"OppOver500"`
+	LeadInFGPCT             string      `mapstructure:"LeadInFGPCT"`
+	LeadInReb               string      `mapstructure:"LeadInReb"`
+	FewerTurnovers          string      `mapstructure:"FewerTurnovers"`
+	PointsPG                float64     `mapstructure:"PointsPG"`
+	OppPointsPG             float64     `mapstructure:"OppPointsPG"`
+	DiffPointsPG            float64     `mapstructure:"DiffPointsPG"`
+	VsEast                  string      `mapstructure:"vsEast"`
+	VsAtlantic              string      `mapstructure:"vsAtlantic"`
+	VsCentral               string      `mapstructure:"vsCentral"`
+	VsSoutheast             string      `mapstructure:"vsSoutheast"`
+	VsWest                  string      `mapstructure:"vsWest"`
+	VsNorthwest             string      `mapstructure:"vsNorthwest"`
+	VsPacific               string      `mapstructure:"vsPacific"`
+	VsSouthwest             string      `mapstructure:"vsSouthwest"`
+	Jan                     interface{} `mapstructure:"Jan"`
+	Feb                     interface{} `mapstructure:"Feb"`
+	Mar                     interface{} `mapstructure:"Mar"`
+	APR                     interface{} `mapstructure:"Apr"`
+	May                     interface{} `mapstructure:"May"`
+	Jun                     interface{} `mapstructure:"Jun"`
+	Jul                     interface{} `mapstructure:"Jul"`
+	Aug                     interface{} `mapstructure:"Aug"`
+	Sep                     interface{} `mapstructure:"Sep"`
+	Oct                     string      `mapstructure:"Oct"`
+	Nov                     string      `mapstructure:"Nov"`
+	DEC                     string      `mapstructure:"Dec"`
+	Score80_Plus            string      `mapstructure:"Score_80_Plus"`
+	OppScore80_Plus         string      `mapstructure:"Opp_Score_80_Plus"`
+	ScoreBelow80            string      `mapstructure:"Score_Below_80"`
+	OppScoreBelow80         string      `mapstructure:"Opp_Score_Below_80"`
+	TotalPoints             int64       `mapstructure:"TotalPoints"`
+	OppTotalPoints          int64       `mapstructure:"OppTotalPoints"`
+	DiffTotalPoints         int64       `mapstructure:"DiffTotalPoints"`
+}
+
 type Stat struct {
 	GameID           string  `mapstructure:"GAME_ID"`
 	TeamID           int64   `mapstructure:"TEAM_ID"`
