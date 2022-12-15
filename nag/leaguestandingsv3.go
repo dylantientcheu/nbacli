@@ -11,6 +11,7 @@ import (
 // LeagueStandingsV3 wraps request to and response from leaguestandingsv3 endpoint.
 type LeagueStandingsV3 struct {
 	*Client
+	LeagueID   string
 	Season     string
 	SeasonType params.SeasonType
 
@@ -21,6 +22,8 @@ type LeagueStandingsV3 struct {
 func NewLeagueStandingsV3() *LeagueStandingsV3 {
 	return &LeagueStandingsV3{
 		Client: NewDefaultClient(),
+
+		LeagueID: params.LeagueID.Default(),
 
 		Season:     params.CurrentSeason,
 		SeasonType: params.DefaultSeasonType,
@@ -37,8 +40,10 @@ func (c *LeagueStandingsV3) Get() error {
 	req.Header = DefaultStatsHeader
 
 	q := req.URL.Query()
+	q.Add("LeagueID", c.LeagueID)
 	q.Add("Season", c.Season)
 	q.Add("SeasonType", string(c.SeasonType))
+
 	req.URL.RawQuery = q.Encode()
 
 	b, err := c.Do(req)
@@ -50,6 +55,7 @@ func (c *LeagueStandingsV3) Get() error {
 	if err := json.Unmarshal(b, &res); err != nil {
 		return err
 	}
+
 	c.Response = &res
 	return nil
 }

@@ -2,6 +2,7 @@ package constants
 
 import (
 	"github.com/dylantientcheu/nbacli/nba"
+	"github.com/evertras/bubble-table/table"
 
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
@@ -10,15 +11,40 @@ import (
 
 /* CONSTANTS */
 
+var BaseStyle = lipgloss.NewStyle().
+	BorderStyle(lipgloss.RoundedBorder()).
+	BorderForeground(lipgloss.Color("#874BFD"))
+
 var (
 	// P the current tea program
 	P *tea.Program
-	// Er the entry repository for the tui
+
 	Gm *nba.BoxScoreRepository
-	// Pr the project repository for the tui
 	Sb *nba.ScoreboardRepository
+	St *nba.StandingsRepository
+
 	// WindowSize store the size of the terminal window
 	WindowSize tea.WindowSizeMsg
+
+	CustomTableBorder = table.Border{
+		Top:    "─",
+		Left:   "│",
+		Right:  "│",
+		Bottom: "─",
+
+		TopRight:    "╮",
+		TopLeft:     "╭",
+		BottomRight: "╯",
+		BottomLeft:  "╰",
+
+		TopJunction:    "┬",
+		LeftJunction:   "├",
+		RightJunction:  "┤",
+		BottomJunction: "┴",
+		InnerJunction:  "┼",
+
+		InnerDivider: "│",
+	}
 )
 
 /* STYLING */
