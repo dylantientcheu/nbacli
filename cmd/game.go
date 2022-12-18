@@ -13,7 +13,8 @@ import (
 
 // args
 var date = ""
-var gameID = ""
+
+// var gameID = ""
 
 var hasYesterday = false
 var hasTomorrow = false
@@ -54,10 +55,10 @@ var StandingCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(gameCmd)
-	rootCmd.AddCommand(StandingCmd)
 	rootCmd.PersistentFlags().StringVarP(&date, "date", "d", "", "Date to get the schedule for (YYYYMMDD)")
 	rootCmd.PersistentFlags().BoolVarP(&hasYesterday, "yesterday", "y", false, "Get yesterday's games")
 	rootCmd.PersistentFlags().BoolVarP(&hasTomorrow, "tomorrow", "t", false, "Get tomorrow's games")
-
 	rootCmd.MarkFlagsMutuallyExclusive("yesterday", "tomorrow", "date")
+
+	rootCmd.AddCommand(StandingCmd)
 }

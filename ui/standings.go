@@ -1,6 +1,9 @@
 package ui
 
 import (
+	"strings"
+
+	"github.com/dylantientcheu/nbacli/nag/params"
 	"github.com/dylantientcheu/nbacli/nba"
 	"github.com/dylantientcheu/nbacli/ui/constants"
 
@@ -16,12 +19,13 @@ type StandingsModel struct {
 	easternConfTable      table.Model
 	westernConfTable      table.Model
 	help                  help.Model
+	selectedTab           int
 	width, height, margin int
 }
 
 func (m *StandingsModel) recalculateTable() {
-	m.easternConfTable = m.easternConfTable.WithTargetWidth(m.width)
-	m.westernConfTable = m.westernConfTable.WithTargetWidth(m.width)
+	m.easternConfTable = m.easternConfTable.WithTargetWidth(m.width - constants.BleedSpaceWidth)
+	m.westernConfTable = m.westernConfTable.WithTargetWidth(m.width - constants.BleedSpaceWidth)
 }
 
 func (m StandingsModel) Init() tea.Cmd { return nil }
@@ -31,13 +35,22 @@ func (m StandingsModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
+		case "tab":
+			m.selectedTab = (m.selectedTab + 1) % 2
+			if (m.selectedTab) == 0 {
+				m.easternConfTable = m.easternConfTable.Focused(true)
+				m.westernConfTable = m.westernConfTable.Focused(false)
+			} else {
+				m.easternConfTable = m.easternConfTable.Focused(false)
+				m.westernConfTable = m.westernConfTable.Focused(true)
+			}
 		case "q", "esc":
 			return m, tea.Quit
 		case "ctrl+c":
 			return m, tea.Quit
 		case "enter":
 			// TODO: to team view
-			return m, tea.Batch()
+			// return m, tea.Batch()
 		}
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
@@ -59,6 +72,7 @@ func (m StandingsModel) View() string {
 		Up:       key.NewBinding(key.WithKeys("up"), key.WithHelp("↑", "highlight previous row")),
 		Previous: key.NewBinding(key.WithKeys("esc", "q"), key.WithHelp("q/esc", "back to games list")),
 	}
+
 	helpContainer := lipgloss.NewStyle().
 		SetString(m.help.View(keyMap)).
 		Width(m.width).
@@ -66,10 +80,36 @@ func (m StandingsModel) View() string {
 		PaddingTop(1).
 		String()
 
-	easternConfText := lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Padding(1, 3).Background(lipgloss.AdaptiveColor{Light: "214", Dark: "#181818"}).Render("EASTERN CONFERENCE")
-	westernConfText := lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Padding(1, 3).Background(lipgloss.AdaptiveColor{Light: "214", Dark: "#181818"}).Render("WESTERN CONFERENCE")
+	tabGap := constants.TabStyle.Copy().
+		BorderTop(false).
+		BorderLeft(false).
+		BorderRight(false)
 
-	return easternConfText + "\n" + easternTable + "\n" + westernConfText + "\n" + westernTable + "\n" + helpContainer
+	tabRow := lipgloss.JoinHorizontal(
+		lipgloss.Top,
+		constants.ActiveTabStyle.Render("EASTERN CONFERENCE"),
+		constants.TabStyle.Render("WESTERN CONFERENCE"),
+	)
+
+	renderedTable := easternTable
+
+	if m.selectedTab == 1 {
+		tabRow = lipgloss.JoinHorizontal(
+			lipgloss.Top,
+			constants.TabStyle.Render("EASTERN CONFERENCE"),
+			constants.ActiveTabStyle.Render("WESTERN CONFERENCE"),
+		)
+		renderedTable = westernTable
+	}
+
+	gap := tabGap.Render(strings.Repeat(" ", constants.Max(0, m.width-lipgloss.Width(tabRow))))
+
+	tabRow = lipgloss.JoinHorizontal(lipgloss.Bottom, tabRow, gap)
+
+	// title
+	title := constants.TitleStyle.Render("NBA Standings: " + params.CurrentSeason)
+
+	return constants.DocStyle.Render(title + "\n\n" + tabRow + "\n" + renderedTable + "\n" + helpContainer)
 }
 
 func InitStandingsView() *StandingsModel {
@@ -89,10 +129,10 @@ func InitStandingsView() *StandingsModel {
 
 	easternRows, westernRows := newStandingsBoard(constants.St)
 
-	tEast := table.New(columns).WithRows(easternRows).Focused(true).Border(constants.CustomTableBorder).WithBaseStyle(constants.BaseStyle).WithPageSize(constants.WindowSize.Height / 3)
-	tWest := table.New(columns).WithRows(westernRows).Border(constants.CustomTableBorder).WithBaseStyle(constants.BaseStyle).WithPageSize(constants.WindowSize.Height / 3)
+	tEast := table.New(columns).WithRows(easternRows).Focused(true).Border(constants.CustomTableBorder).WithBaseStyle(constants.BaseStyle).WithPageSize(10)
+	tWest := table.New(columns).WithRows(westernRows).Border(constants.CustomTableBorder).WithBaseStyle(constants.BaseStyle).WithPageSize(10)
 
-	m := StandingsModel{tEast, tWest, help.New(), constants.WindowSize.Height, constants.WindowSize.Width, 3}
+	m := StandingsModel{tEast, tWest, help.New(), 0, constants.WindowSize.Height, constants.WindowSize.Width, 3}
 	return &m
 }
 

@@ -17,29 +17,7 @@ import (
 
 var baseStyle = lipgloss.NewStyle().
 	BorderStyle(lipgloss.RoundedBorder()).
-	BorderForeground(lipgloss.Color("#874BFD"))
-
-var (
-	customBorder = table.Border{
-		Top:    "─",
-		Left:   "│",
-		Right:  "│",
-		Bottom: "─",
-
-		TopRight:    "╮",
-		TopLeft:     "╭",
-		BottomRight: "╯",
-		BottomLeft:  "╰",
-
-		TopJunction:    "┬",
-		LeftJunction:   "├",
-		RightJunction:  "┤",
-		BottomJunction: "┴",
-		InnerJunction:  "┼",
-
-		InnerDivider: "│",
-	}
-)
+	BorderForeground(constants.Accent)
 
 type keyMap struct {
 	Down     key.Binding
@@ -101,6 +79,7 @@ func (m GameModel) View() string {
 		Up:       key.NewBinding(key.WithKeys("up"), key.WithHelp("↑", "highlight previous row")),
 		Previous: key.NewBinding(key.WithKeys("esc", "q"), key.WithHelp("q/esc", "back to games list")),
 	}
+
 	helpContainer := lipgloss.NewStyle().
 		SetString(m.help.View(keyMap)).
 		Width(m.width).
@@ -108,7 +87,6 @@ func (m GameModel) View() string {
 		PaddingTop(1).
 		String()
 
-	// helpText :=
 	return scoretext.RenderScoreText(m.activeGame.ArenaName, m.activeGame.GameDate, m.activeGame.HomeTeamScore, m.activeGame.VisitorTeamScore, m.activeGame.HomeTeamName, m.activeGame.VisitorTeamName) + table + helpContainer
 }
 
@@ -133,7 +111,7 @@ func InitGameView(activeGameID string, activeGame nba.BoxScoreSummary, previousM
 
 	t := table.New(columns).WithRows(rows).
 		Focused(true).
-		Border(customBorder).WithBaseStyle(baseStyle).WithPageSize(constants.WindowSize.Height / 3)
+		Border(constants.CustomTableBorder).WithBaseStyle(baseStyle).WithPageSize(constants.WindowSize.Height / 3)
 
 	m := GameModel{t, activeGameID, activeGame, previousModel, help.New(), constants.WindowSize.Height, constants.WindowSize.Width, 3}
 	return &m

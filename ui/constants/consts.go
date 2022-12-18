@@ -13,7 +13,7 @@ import (
 
 var BaseStyle = lipgloss.NewStyle().
 	BorderStyle(lipgloss.RoundedBorder()).
-	BorderForeground(lipgloss.Color("#874BFD"))
+	BorderForeground(Accent)
 
 var (
 	// P the current tea program
@@ -45,6 +45,42 @@ var (
 
 		InnerDivider: "│",
 	}
+
+	Accent = lipgloss.AdaptiveColor{Light: "#874BFD", Dark: "#7D56F4"}
+
+	activeTabBorder = lipgloss.Border{
+		Top:         "─",
+		Bottom:      " ",
+		Left:        "│",
+		Right:       "│",
+		TopLeft:     "╭",
+		TopRight:    "╮",
+		BottomLeft:  "┘",
+		BottomRight: "└",
+	}
+
+	tabBorder = lipgloss.Border{
+		Top:         "─",
+		Bottom:      "─",
+		Left:        "│",
+		Right:       "│",
+		TopLeft:     "╭",
+		TopRight:    "╮",
+		BottomLeft:  "┴",
+		BottomRight: "┴",
+	}
+
+	TabStyle = lipgloss.NewStyle().
+			Border(tabBorder, true).
+			BorderForeground(Accent).
+			Padding(0, 1)
+
+	ActiveTabStyle = lipgloss.NewStyle().
+			Border(activeTabBorder, true).
+			BorderForeground(Accent).
+			Padding(0, 1)
+
+	BleedSpaceWidth = 4
 )
 
 /* STYLING */
@@ -52,8 +88,11 @@ var (
 // DocStyle styling for viewports
 var DocStyle = lipgloss.NewStyle().Margin(1, 2)
 
+// TitleStyle styling for titles
+var TitleStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#FFFFFF")).Background(Accent).Padding(0, 2)
+
 // HelpStyle styling for help context menu
-var HelpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("241")).Render
+var HelpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("241"))
 
 // ErrStyle provides styling for error messages
 var ErrStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#bd534b")).Render
@@ -91,4 +130,11 @@ var Keymap = keymap{
 		key.WithKeys("ctrl+c", "q"),
 		key.WithHelp("ctrl+c/q", "quit"),
 	),
+}
+
+func Max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
