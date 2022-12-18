@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/dylantientcheu/nbacli/ui/constants"
 	"golang.org/x/term"
 )
 
@@ -13,7 +14,7 @@ var (
 	subtle         = lipgloss.AdaptiveColor{Light: "#D9DCCF", Dark: "#212121"}
 	dialogBoxStyle = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).
-			BorderForeground(lipgloss.Color("#874BFD")).
+			BorderForeground(constants.Accent).
 			Padding(1, 1).
 			BorderTop(true).
 			BorderLeft(true).

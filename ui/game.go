@@ -17,43 +17,7 @@ import (
 
 var baseStyle = lipgloss.NewStyle().
 	BorderStyle(lipgloss.RoundedBorder()).
-	BorderForeground(lipgloss.Color("#874BFD"))
-
-var (
-	customBorder = table.Border{
-		Top:    "─",
-		Left:   "│",
-		Right:  "│",
-		Bottom: "─",
-
-		TopRight:    "╮",
-		TopLeft:     "╭",
-		BottomRight: "╯",
-		BottomLeft:  "╰",
-
-		TopJunction:    "┬",
-		LeftJunction:   "├",
-		RightJunction:  "┤",
-		BottomJunction: "┴",
-		InnerJunction:  "┼",
-
-		InnerDivider: "│",
-	}
-)
-
-type keyMap struct {
-	Down     key.Binding
-	Up       key.Binding
-	Previous key.Binding
-}
-
-func (k keyMap) FullHelp() [][]key.Binding {
-	return [][]key.Binding{k.ShortHelp()}
-}
-
-func (k keyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Down, k.Up, k.Previous}
-}
+	BorderForeground(constants.Accent)
 
 type GameModel struct {
 	table                 table.Model
@@ -62,6 +26,12 @@ type GameModel struct {
 	previousModel         Model
 	help                  help.Model
 	width, height, margin int
+}
+
+var gameKM = GameKM{
+	Down:     key.NewBinding(key.WithKeys("down"), key.WithHelp("↓", "highlight next row")),
+	Up:       key.NewBinding(key.WithKeys("up"), key.WithHelp("↑", "highlight previous row")),
+	Previous: key.NewBinding(key.WithKeys("esc", "q"), key.WithHelp("q/esc", "back to games list")),
 }
 
 func (m *GameModel) recalculateTable() {
@@ -96,19 +66,13 @@ func (m GameModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m GameModel) View() string {
 	table := m.table.View() + "\n"
 
-	keyMap := keyMap{
-		Down:     key.NewBinding(key.WithKeys("down"), key.WithHelp("↓", "highlight next row")),
-		Up:       key.NewBinding(key.WithKeys("up"), key.WithHelp("↑", "highlight previous row")),
-		Previous: key.NewBinding(key.WithKeys("esc", "q"), key.WithHelp("q/esc", "back to games list")),
-	}
 	helpContainer := lipgloss.NewStyle().
-		SetString(m.help.View(keyMap)).
+		SetString(m.help.View(gameKM)).
 		Width(m.width).
 		Align(lipgloss.Center).
 		PaddingTop(1).
 		String()
 
-	// helpText :=
 	return scoretext.RenderScoreText(m.activeGame.ArenaName, m.activeGame.GameDate, m.activeGame.HomeTeamScore, m.activeGame.VisitorTeamScore, m.activeGame.HomeTeamName, m.activeGame.VisitorTeamName) + table + helpContainer
 }
 
@@ -129,11 +93,11 @@ func InitGameView(activeGameID string, activeGame nba.BoxScoreSummary, previousM
 		table.NewFlexColumn("PTS", "PTS", 3),
 	}
 
-	rows := newStatsBoard(constants.Gm, activeGameID)
+	rows := newStatsBoard(nba.Gm, activeGameID)
 
 	t := table.New(columns).WithRows(rows).
 		Focused(true).
-		Border(customBorder).WithBaseStyle(baseStyle).WithPageSize(constants.WindowSize.Height / 3)
+		Border(constants.CustomTableBorder).WithBaseStyle(baseStyle).WithPageSize(constants.WindowSize.Height / 3)
 
 	m := GameModel{t, activeGameID, activeGame, previousModel, help.New(), constants.WindowSize.Height, constants.WindowSize.Width, 3}
 	return &m
@@ -148,7 +112,9 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 	var rows []table.Row
 	areBenchers := false
 
-	rows = append(rows, table.NewRow(renderTeamRow("AWAY TEAM")).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "0", Dark: "214"})))
+	rows = append(rows, table.NewRow(renderTeamRow("AWAY TEAM")).
+		WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).
+			Background(constants.Secondary)))
 
 	for idx, stat := range gameStats {
 		// format plus minus
@@ -188,7 +154,9 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 		}
 
 		if idx < len(gameStats)-1 && gameStats[idx].TeamID != gameStats[idx+1].TeamID {
-			rows = append(rows, table.NewRow(renderTeamRow("HOME TEAM")).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "0", Dark: "214"})))
+			rows = append(rows, table.NewRow(renderTeamRow("HOME TEAM")).WithStyle(lipgloss.NewStyle().
+				AlignHorizontal(lipgloss.Center).
+				Background(constants.Secondary)))
 		}
 	}
 	return rows
@@ -197,7 +165,7 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 func renderBenchRow() table.RowData {
 	return table.RowData{
 		"POS":  "",
-		"NAME": table.NewStyledCell("B E N C H", lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "0", Dark: "214"}).Padding(0)),
+		"NAME": table.NewStyledCell("B E N C H", lipgloss.NewStyle().Foreground(constants.Tertiary).Padding(0)),
 		"MIN":  "",
 		"FG":   "",
 		"3PT":  "",
@@ -215,7 +183,7 @@ func renderBenchRow() table.RowData {
 func renderTeamRow(team string) table.RowData {
 	return table.RowData{
 		"POS":  "",
-		"NAME": table.NewStyledCell(team, lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "214", Dark: "0"})),
+		"NAME": table.NewStyledCell(team, lipgloss.NewStyle().Foreground(lipgloss.Color("#FFFFFF"))),
 		"MIN":  "",
 		"FG":   "",
 		"3PT":  "",

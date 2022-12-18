@@ -31,7 +31,7 @@ type Model struct {
 }
 
 func InitScoreboard(date time.Time) tea.Model {
-	items := newScoreboardList(constants.Sb, date)
+	items := newScoreboardList(nba.Sb, date)
 	m := Model{mode: nav, currentDate: date, list: list.NewModel(items, list.NewDefaultDelegate(), 8, 8)}
 	if constants.WindowSize.Height != 0 {
 		top, right, bottom, left := constants.DocStyle.GetMargin()
