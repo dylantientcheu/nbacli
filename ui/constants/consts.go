@@ -1,7 +1,8 @@
 package constants
 
 import (
-	"github.com/dylantientcheu/nbacli/nba"
+	"strconv"
+
 	"github.com/evertras/bubble-table/table"
 
 	"github.com/charmbracelet/bubbles/key"
@@ -13,15 +14,11 @@ import (
 
 var BaseStyle = lipgloss.NewStyle().
 	BorderStyle(lipgloss.RoundedBorder()).
-	BorderForeground(Accent)
+	BorderForeground(Secondary)
 
 var (
 	// P the current tea program
 	P *tea.Program
-
-	Gm *nba.BoxScoreRepository
-	Sb *nba.ScoreboardRepository
-	St *nba.StandingsRepository
 
 	// WindowSize store the size of the terminal window
 	WindowSize tea.WindowSizeMsg
@@ -46,11 +43,21 @@ var (
 		InnerDivider: "│",
 	}
 
-	Accent = lipgloss.AdaptiveColor{Light: "#874BFD", Dark: "#7D56F4"}
+	LiveText = lipgloss.NewStyle().Background(lipgloss.AdaptiveColor{Light: "#ef2929", Dark: "#ef2929"}).Foreground(lipgloss.AdaptiveColor{Light: "#ffffff", Dark: "#ffffff"}).Bold(true)
+
+	FinalText = lipgloss.NewStyle().Background(lipgloss.Color("#9356DF")).Foreground(lipgloss.Color("#ffffff")).Bold(true)
+	DescText  = lipgloss.NewStyle().Foreground(lipgloss.Color("#818181"))
+
+	ScoreText = lipgloss.NewStyle().Background(lipgloss.AdaptiveColor{Light: "214", Dark: "#181818"}).Foreground(lipgloss.AdaptiveColor{Light: "0", Dark: "214"})
+
+	Accent       = lipgloss.AdaptiveColor{Light: "#5b1b7b", Dark: "#5b1b7b"}
+	AccentDarker = lipgloss.AdaptiveColor{Light: "#5b1b7b", Dark: "#5b1b7b"}
+	Secondary    = lipgloss.AdaptiveColor{Light: "#ed2265", Dark: "#ed2265"}
+	Tertiary     = lipgloss.AdaptiveColor{Light: "#f69053", Dark: "#f69053"}
 
 	activeTabBorder = lipgloss.Border{
+		Bottom:      "─",
 		Top:         "─",
-		Bottom:      " ",
 		Left:        "│",
 		Right:       "│",
 		TopLeft:     "╭",
@@ -60,24 +67,29 @@ var (
 	}
 
 	tabBorder = lipgloss.Border{
-		Top:         "─",
-		Bottom:      "─",
-		Left:        "│",
-		Right:       "│",
-		TopLeft:     "╭",
-		TopRight:    "╮",
-		BottomLeft:  "┴",
-		BottomRight: "┴",
+		Bottom: "─",
+		// Top:         "─",
+		// Left:        "│",
+		// Right:       "│",
+		// TopLeft:     "╭",
+		// TopRight:    "╮",
+		BottomLeft:  "─",
+		BottomRight: "─",
 	}
 
 	TabStyle = lipgloss.NewStyle().
 			Border(tabBorder, true).
 			BorderForeground(Accent).
+			Background(Accent).
+			Foreground(lipgloss.Color("#FFFFFF")).
 			Padding(0, 1)
 
 	ActiveTabStyle = lipgloss.NewStyle().
 			Border(activeTabBorder, true).
-			BorderForeground(Accent).
+			BorderForeground(Secondary).
+			Background(Secondary).
+			Foreground(lipgloss.Color("#FFFFFF")).
+			Bold(true).
 			Padding(0, 1)
 
 	BleedSpaceWidth = 4
@@ -137,4 +149,20 @@ func Max(a, b int) int {
 		return a
 	}
 	return b
+}
+
+func LiveStyle() string {
+	return LiveText.Render(" LIVE ")
+}
+
+func FinalStyle() string {
+	return FinalText.Render(" FINAL ")
+}
+
+func ScoreStyle(homeScore int, awayScore int) string {
+	return ScoreText.Render(" " + strconv.Itoa(homeScore) + " - " + strconv.Itoa(awayScore) + " ")
+}
+
+func DescStyle(desc string) string {
+	return DescText.Render(desc)
 }

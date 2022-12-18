@@ -26,7 +26,7 @@ func StartTea(date time.Time) {
 			}
 		}()
 	}
-	constants.Sb = &scbrd
+	nba.Sb = &scbrd
 
 	m := InitScoreboard(date)
 	UpdateTeaView(m)

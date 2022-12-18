@@ -9,7 +9,7 @@ import (
 	"github.com/nleeper/goment"
 
 	"github.com/dylantientcheu/nbacli/nag"
-	"github.com/dylantientcheu/nbacli/styles"
+	"github.com/dylantientcheu/nbacli/ui/constants"
 )
 
 type BoxScoreSummary struct {
@@ -40,15 +40,15 @@ func (g BoxScoreSummary) Description() string {
 
 		// show time from now
 		desc = fmt.Sprintf("Tip-off %s | %s", moment.From(now), g.ArenaName)
-		desc = styles.DescStyle(desc)
+		desc = constants.DescStyle(desc)
 	} else if status == "Final" {
 		// passed game
 		// gameDate := GetDateFromString(g.GameDate).Format("2006-01-02")
-		desc = fmt.Sprintf("%s  %s", styles.ScoreStyle(g.HomeTeamScore, g.VisitorTeamScore), styles.DescStyle(g.ArenaName))
+		desc = fmt.Sprintf("%s  %s", constants.ScoreStyle(g.HomeTeamScore, g.VisitorTeamScore), constants.DescStyle(g.ArenaName))
 	} else {
 		// live game
-		desc = fmt.Sprintf("%s %s - %s | %s", styles.LiveStyle(), styles.ScoreStyle(g.HomeTeamScore, g.VisitorTeamScore), styles.DescStyle(status), styles.DescStyle(g.ArenaName))
-		desc = styles.DescText.Render(desc)
+		desc = fmt.Sprintf("%s %s - %s | %s", constants.LiveStyle(), constants.ScoreStyle(g.HomeTeamScore, g.VisitorTeamScore), constants.DescStyle(status), constants.DescStyle(g.ArenaName))
+		desc = constants.DescText.Render(desc)
 	}
 
 	return desc

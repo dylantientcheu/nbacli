@@ -127,7 +127,7 @@ func InitStandingsView() *StandingsModel {
 		table.NewFlexColumn("L10", "L10", 3),
 	}
 
-	easternRows, westernRows := newStandingsBoard(constants.St)
+	easternRows, westernRows := newStandingsBoard(nba.St)
 
 	tEast := table.New(columns).WithRows(easternRows).Focused(true).Border(constants.CustomTableBorder).WithBaseStyle(constants.BaseStyle).WithPageSize(10)
 	tWest := table.New(columns).WithRows(westernRows).Border(constants.CustomTableBorder).WithBaseStyle(constants.BaseStyle).WithPageSize(10)

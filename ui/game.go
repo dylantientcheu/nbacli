@@ -107,7 +107,7 @@ func InitGameView(activeGameID string, activeGame nba.BoxScoreSummary, previousM
 		table.NewFlexColumn("PTS", "PTS", 3),
 	}
 
-	rows := newStatsBoard(constants.Gm, activeGameID)
+	rows := newStatsBoard(nba.Gm, activeGameID)
 
 	t := table.New(columns).WithRows(rows).
 		Focused(true).
@@ -126,7 +126,9 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 	var rows []table.Row
 	areBenchers := false
 
-	rows = append(rows, table.NewRow(renderTeamRow("AWAY TEAM")).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "0", Dark: "214"})))
+	rows = append(rows, table.NewRow(renderTeamRow("AWAY TEAM")).
+		WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).
+			Background(constants.Secondary)))
 
 	for idx, stat := range gameStats {
 		// format plus minus
@@ -166,7 +168,9 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 		}
 
 		if idx < len(gameStats)-1 && gameStats[idx].TeamID != gameStats[idx+1].TeamID {
-			rows = append(rows, table.NewRow(renderTeamRow("HOME TEAM")).WithStyle(lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Background(lipgloss.AdaptiveColor{Light: "0", Dark: "214"})))
+			rows = append(rows, table.NewRow(renderTeamRow("HOME TEAM")).WithStyle(lipgloss.NewStyle().
+				AlignHorizontal(lipgloss.Center).
+				Background(constants.Secondary)))
 		}
 	}
 	return rows
@@ -175,7 +179,7 @@ func statsToRows(gameStats []nba.GameStat) []table.Row {
 func renderBenchRow() table.RowData {
 	return table.RowData{
 		"POS":  "",
-		"NAME": table.NewStyledCell("B E N C H", lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "0", Dark: "214"}).Padding(0)),
+		"NAME": table.NewStyledCell("B E N C H", lipgloss.NewStyle().Foreground(constants.Tertiary).Padding(0)),
 		"MIN":  "",
 		"FG":   "",
 		"3PT":  "",
@@ -193,7 +197,7 @@ func renderBenchRow() table.RowData {
 func renderTeamRow(team string) table.RowData {
 	return table.RowData{
 		"POS":  "",
-		"NAME": table.NewStyledCell(team, lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "214", Dark: "0"})),
+		"NAME": table.NewStyledCell(team, lipgloss.NewStyle().Foreground(lipgloss.Color("#FFFFFF"))),
 		"MIN":  "",
 		"FG":   "",
 		"3PT":  "",
