@@ -19,20 +19,6 @@ var baseStyle = lipgloss.NewStyle().
 	BorderStyle(lipgloss.RoundedBorder()).
 	BorderForeground(constants.Accent)
 
-type keyMap struct {
-	Down     key.Binding
-	Up       key.Binding
-	Previous key.Binding
-}
-
-func (k keyMap) FullHelp() [][]key.Binding {
-	return [][]key.Binding{k.ShortHelp()}
-}
-
-func (k keyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Down, k.Up, k.Previous}
-}
-
 type GameModel struct {
 	table                 table.Model
 	activeGameID          string
@@ -40,6 +26,12 @@ type GameModel struct {
 	previousModel         Model
 	help                  help.Model
 	width, height, margin int
+}
+
+var gameKM = GameKM{
+	Down:     key.NewBinding(key.WithKeys("down"), key.WithHelp("↓", "highlight next row")),
+	Up:       key.NewBinding(key.WithKeys("up"), key.WithHelp("↑", "highlight previous row")),
+	Previous: key.NewBinding(key.WithKeys("esc", "q"), key.WithHelp("q/esc", "back to games list")),
 }
 
 func (m *GameModel) recalculateTable() {
@@ -74,14 +66,8 @@ func (m GameModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m GameModel) View() string {
 	table := m.table.View() + "\n"
 
-	keyMap := keyMap{
-		Down:     key.NewBinding(key.WithKeys("down"), key.WithHelp("↓", "highlight next row")),
-		Up:       key.NewBinding(key.WithKeys("up"), key.WithHelp("↑", "highlight previous row")),
-		Previous: key.NewBinding(key.WithKeys("esc", "q"), key.WithHelp("q/esc", "back to games list")),
-	}
-
 	helpContainer := lipgloss.NewStyle().
-		SetString(m.help.View(keyMap)).
+		SetString(m.help.View(gameKM)).
 		Width(m.width).
 		Align(lipgloss.Center).
 		PaddingTop(1).

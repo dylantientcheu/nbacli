@@ -23,6 +23,13 @@ type StandingsModel struct {
 	width, height, margin int
 }
 
+var standingsKM = StandingKM{
+	NextTab:  key.NewBinding(key.WithKeys("tab"), key.WithHelp("tab", "toggle conference (change tab)")),
+	Down:     key.NewBinding(key.WithKeys("down"), key.WithHelp("↓", "next row")),
+	Up:       key.NewBinding(key.WithKeys("up"), key.WithHelp("↑", "previous row")),
+	Previous: key.NewBinding(key.WithKeys("esc", "q"), key.WithHelp("q/esc", "quit")),
+}
+
 func (m *StandingsModel) recalculateTable() {
 	m.easternConfTable = m.easternConfTable.WithTargetWidth(m.width - constants.BleedSpaceWidth)
 	m.westernConfTable = m.westernConfTable.WithTargetWidth(m.width - constants.BleedSpaceWidth)
@@ -44,9 +51,7 @@ func (m StandingsModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.easternConfTable = m.easternConfTable.Focused(false)
 				m.westernConfTable = m.westernConfTable.Focused(true)
 			}
-		case "q", "esc":
-			return m, tea.Quit
-		case "ctrl+c":
+		case "q", "esc", "ctrl+c":
 			return m, tea.Quit
 		case "enter":
 			// TODO: to team view
@@ -67,14 +72,8 @@ func (m StandingsModel) View() string {
 	easternTable := m.easternConfTable.View() + "\n"
 	westernTable := m.westernConfTable.View() + "\n"
 
-	keyMap := keyMap{
-		Down:     key.NewBinding(key.WithKeys("down"), key.WithHelp("↓", "highlight next row")),
-		Up:       key.NewBinding(key.WithKeys("up"), key.WithHelp("↑", "highlight previous row")),
-		Previous: key.NewBinding(key.WithKeys("esc", "q"), key.WithHelp("q/esc", "back to games list")),
-	}
-
 	helpContainer := lipgloss.NewStyle().
-		SetString(m.help.View(keyMap)).
+		SetString(m.help.View(standingsKM)).
 		Width(m.width).
 		Align(lipgloss.Center).
 		PaddingTop(1).
