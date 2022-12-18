@@ -59,23 +59,24 @@ nbacli games
 
 <small>Navigate through the games using the <kbd>↑</kbd> arrow keys <kbd>↓</kbd> and press <kbd>Enter</kbd> to get the stats for a specific game.</small>
 
-#### Get the stats for the day before
-
 ```bash
+# Get the stats for the day before
 nbacli games --yesterday
-```
-
-#### or the day after
-
-```bash
+# or the day after
 nbacli games --tomorrow
-```
-
-### Get the games for a specific date
-
-```bash
+# or a specific date
 nbacli games --date YYYYMMDD
 ```
+
+### Get the conference standings
+
+```bash
+nbacli standings
+```
+
+<small>Highlight rows <kbd>↑</kbd> <kbd>↓</kbd> and press <kbd>Tab</kbd> to switch tabs.</small>
+
+![Alt text](screenshots/standings.png)
 
 ## ⌨️ Under the hood
 
