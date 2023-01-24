@@ -40,6 +40,7 @@ archives:
     format: zip
     files:
       - LICENSE
+      - README.md
 
 release:
   prerelease: auto
@@ -59,10 +60,10 @@ chocolateys:
     url_template: "https://github.com/dylantientcheu/nbacli/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
     icon_url: 'https://raw.githubusercontent.com/dylantientcheu/nbacli/master/screenshots/logo.png'
     copyright: 2023 Dylan Tientcheu
-    license_url: https://github.com/dylantientcheu/nbacli/blob/main/LICENSE
+    license_url: https://github.com/dylantientcheu/nbacli/blob/master/LICENSE
     require_license_acceptance: false
     project_source_url: https://github.com/dylantientcheu/nbacli
-    docs_url: https://github.com/dylantientcheu/nbacli/blob/main/README.md
+    docs_url: https://github.com/dylantientcheu/nbacli/blob/master/README.md
     bug_tracker_url: https://github.com/dylantientcheu/nbacli/issues
     tags: "nbacli nba terminal standings stats scores"
     summary: The NBA in your terminal.
@@ -70,13 +71,6 @@ chocolateys:
       {{ .ProjectName }} installer package.
       The NBA in your terminal
     release_notes: "https://github.com/dylantientcheu/nbacli/releases/tag/v{{ .Version }}"
-    dependencies:
-      - id: lipgloss
-        version: 0.6.0
-      - id: bubbles
-        version: 0.14.0
-      - id: cobra
-        version: 1.6.1
     api_key: '{{ .Env.CHOCOLATEY_API_KEY }}'
     source_repo: "https://push.chocolatey.org/"
     skip_publish: false
