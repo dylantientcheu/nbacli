@@ -1,7 +1,7 @@
 <div align='center'>
 <img src="screenshots/banner.svg">
 
-`nbacli` is a command line interface for NBA games.
+`nbacli` is an UNOFFICIAL command line interface for NBA games.
 
 <p>
   <img src="https://forthebadge.com/images/badges/made-with-go.svg">
